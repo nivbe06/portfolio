@@ -1,0 +1,26 @@
+id: relationship_context
+title: Since we last spoke
+version: 1
+
+include_when: "always"
+
+# This section has no Cube query, and that is the point of including it. A QBR
+# is a conversation with a customer, not a report to them, and the thing account
+# teams most often fail to bring is what was agreed last time. That lives in
+# Salesforce and Gong, never in a fact table, so the payload comes entirely from
+# qbr/retrieval.py.
+context:
+  commitments: true
+
+narrative:
+  must_cover:
+    - Every action agreed at the previous review, with its current status
+    - Who owns each one that is still open
+  must_not:
+    - Any figure or date; this section is qualitative, and figures belong in the sections that queried the warehouse for them
+    - Any commitment not present in the payload
+    - Characterising an open action as a failure on the customer's part
+  tone: >
+    A CSM picking up a conversation, not auditing one. Brief. State what was
+    agreed and where it stands.
+  max_words: 110

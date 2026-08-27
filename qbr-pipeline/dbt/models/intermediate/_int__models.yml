@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: int_coupon_events
+    description: >
+      Coupon lifecycle projected out of the effects stream. Replaces the former
+      stg_coupon_events, which read a parallel feed Talon.One does not export.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: effect_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['acceptCoupon', 'rejectCoupon']
+      - name: profile_segment
+        data_tests: [not_null]
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "is_redeemed = (effect_type = 'acceptCoupon')"

@@ -1,0 +1,38 @@
+# The only queryable surface. Every base cube is public:false, so a caller can
+# reach a metric but never a table, and never a column that was not deliberately
+# exposed.
+#
+# One view per grain rather than a single joined view: campaign performance,
+# adoption, anomalies and account overview sit at genuinely different grains,
+# and joining them would fan out rows and quietly double every sum.
+
+views:
+  - name: qbr_campaigns
+    description: Campaign performance for a QBR, by campaign and shopper segment.
+    public: true
+    cubes:
+      - join_path: campaign_performance
+        includes: "*"
+
+  - name: qbr_adoption
+    description: Feature adoption against entitlement, by quarter.
+    public: true
+    cubes:
+      - join_path: feature_adoption
+        includes: "*"
+
+  - name: qbr_anomalies
+    description: >
+      Statistically unusual weekly movements with the raw inputs needed to rank
+      them by business materiality.
+    public: true
+    cubes:
+      - join_path: anomalies
+        includes: "*"
+
+  - name: qbr_overview
+    description: Account-level usage, integration health and loyalty position.
+    public: true
+    cubes:
+      - join_path: account_overview
+        includes: "*"

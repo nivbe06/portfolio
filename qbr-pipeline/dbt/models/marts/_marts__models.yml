@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: dim_tenant
+    columns:
+      - name: tenant_id
+        data_tests: [unique, not_null]
+      - name: plan_tier
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Enterprise', 'Mid-Market']
+
+  - name: dim_application
+    columns:
+      - name: application_id
+        data_tests: [unique, not_null]
+      - name: tenant_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tenant')
+                field: tenant_id
+
+  - name: dim_campaign
+    columns:
+      - name: campaign_id
+        data_tests: [unique, not_null]
+      - name: tenant_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tenant')
+                field: tenant_id
+
+  - name: dim_ruleset
+    columns:
+      - name: ruleset_id
+        data_tests: [unique, not_null]
+      - name: campaign_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_campaign')
+                field: campaign_id
+
+  - name: dim_effect_type
+    columns:
+      - name: effect_type
+        data_tests: [unique, not_null]
+
+  - name: fct_session_evaluations
+    columns:
+      - name: tenant_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_tenant')
+                field: tenant_id
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "sessions_evaluated > 0"
+      # Distinct profiles can never exceed the sessions they were seen in.
+      - expression_is_true:
+          arguments:
+            expression: "distinct_profiles <= sessions_evaluated"
+
+  - name: fct_effects_fired
+    columns:
+      - name: campaign_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_campaign')
+                field: campaign_id
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "sessions_with_effect <= effects_fired"
+
+  - name: fct_coupon_redemptions
+    data_tests:
+      # The components must reconcile. If they do not, redemption_rate is wrong
+      # everywhere it is used.
+      - expression_is_true:
+          arguments:
+            expression: "redemptions + rejections = redemption_attempts"
+
+  - name: fct_loyalty_events
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "net_points_outstanding = points_issued - points_burned"
+
+  - name: fct_integration_health
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "server_errors <= requests"

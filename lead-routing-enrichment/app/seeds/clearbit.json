@@ -1,0 +1,236 @@
+{
+  "acme-commerce.com": {
+    "name": "Acme Commerce",
+    "domain": "acme-commerce.com",
+    "category": {
+      "industry": "Ecommerce",
+      "sector": "Retail"
+    },
+    "metrics": {
+      "employees": 850,
+      "estimatedAnnualRevenue": "$50M-$100M"
+    },
+    "geo": {
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "tech": [
+      "shopify"
+    ],
+    "meta": {
+      "confidence": 0.9,
+      "fetchedAt": "2026-06-01"
+    },
+    "site": {
+      "emailAddress": "info@acme-commerce.com"
+    }
+  },
+  "shopnord.de": {
+    "name": "ShopNord",
+    "domain": "shopnord.de",
+    "category": {
+      "industry": "Software",
+      "sector": "Technology"
+    },
+    "metrics": {
+      "employees": 300,
+      "estimatedAnnualRevenue": "$10M-$25M"
+    },
+    "geo": {
+      "country": "Deutschland",
+      "countryCode": "DE"
+    },
+    "tech": [
+      "sfcc"
+    ],
+    "meta": {
+      "confidence": 0.7,
+      "fetchedAt": "2026-05-10"
+    },
+    "site": {
+      "emailAddress": "info@shopnord.de"
+    }
+  },
+  "fastcart.io": {
+    "name": "FastCart",
+    "domain": "fastcart.io",
+    "category": {
+      "industry": "Retail",
+      "sector": "Retail"
+    },
+    "metrics": {
+      "employees": 120,
+      "estimatedAnnualRevenue": "$5M-$10M"
+    },
+    "geo": {
+      "country": "United States",
+      "countryCode": "US"
+    },
+    "tech": [
+      "commercetools"
+    ],
+    "meta": {
+      "confidence": 0.83,
+      "fetchedAt": "2026-07-02"
+    },
+    "site": {
+      "emailAddress": "info@fastcart.io"
+    }
+  },
+  "bahnpay.de": {
+    "name": "BahnPay",
+    "domain": "bahnpay.de",
+    "category": {
+      "industry": "Fintech",
+      "sector": "Financial Services"
+    },
+    "metrics": {
+      "employees": 0,
+      "estimatedAnnualRevenue": "$25M-$50M"
+    },
+    "geo": {
+      "country": null,
+      "countryCode": "DE"
+    },
+    "tech": [
+      "custom"
+    ],
+    "meta": {
+      "confidence": 0.9,
+      "fetchedAt": "2026-06-20"
+    },
+    "site": {
+      "emailAddress": "info@bahnpay.de"
+    }
+  },
+  "loyalnordic.se": {
+    "name": "Loyal Nordic",
+    "domain": "loyalnordic.se",
+    "category": {
+      "industry": "Retail",
+      "sector": "Retail"
+    },
+    "metrics": {
+      "employees": 600,
+      "estimatedAnnualRevenue": "$25M-$50M"
+    },
+    "geo": {
+      "country": null,
+      "countryCode": "SE"
+    },
+    "tech": [
+      "shopify"
+    ],
+    "meta": {
+      "confidence": 0.88,
+      "fetchedAt": "2026-07-10"
+    },
+    "site": {
+      "emailAddress": "info@loyalnordic.se"
+    }
+  },
+  "brightcart.io": {
+    "name": "BrightCart",
+    "domain": "brightcart.io",
+    "category": {
+      "industry": "Software",
+      "sector": "Technology"
+    },
+    "metrics": {
+      "employees": 200,
+      "estimatedAnnualRevenue": "$10M-$25M"
+    },
+    "geo": {
+      "country": null,
+      "countryCode": "US"
+    },
+    "tech": [
+      "sfcc"
+    ],
+    "meta": {
+      "confidence": 0.72,
+      "fetchedAt": "2026-08-01"
+    },
+    "site": {
+      "emailAddress": "info@brightcart.io"
+    }
+  },
+  "shopwave.de": {
+    "name": "ShopWave",
+    "domain": "shopwave.de",
+    "category": {
+      "industry": "webshop",
+      "sector": "Retail"
+    },
+    "metrics": {
+      "employees": 90,
+      "estimatedAnnualRevenue": "$1M-$5M"
+    },
+    "geo": {
+      "country": null,
+      "countryCode": "DE"
+    },
+    "tech": [
+      "shopify"
+    ],
+    "meta": {
+      "confidence": 0.68,
+      "fetchedAt": "2026-08-02"
+    },
+    "site": {
+      "emailAddress": "info@shopwave.de"
+    }
+  },
+  "nordicliving.se": {
+    "name": "Nordic Living",
+    "domain": "nordicliving.se",
+    "category": {
+      "industry": "lifestyle brand",
+      "sector": "Consumer"
+    },
+    "metrics": {
+      "employees": 150,
+      "estimatedAnnualRevenue": "$5M-$10M"
+    },
+    "geo": {
+      "country": null,
+      "countryCode": "SE"
+    },
+    "tech": [
+      "shopify"
+    ],
+    "meta": {
+      "confidence": 0.86,
+      "fetchedAt": "2026-08-12"
+    },
+    "site": {
+      "emailAddress": "info@nordicliving.se"
+    }
+  },
+  "altbau-grocers.de": {
+    "name": "Altbau Grocers",
+    "domain": "altbau-grocers.de",
+    "category": {
+      "industry": null,
+      "sector": "Retail"
+    },
+    "metrics": {
+      "employees": 45,
+      "estimatedAnnualRevenue": "$1M-$5M"
+    },
+    "geo": {
+      "country": "Germany",
+      "countryCode": "DE"
+    },
+    "tech": [
+      "woocommerce"
+    ],
+    "meta": {
+      "confidence": 0.81,
+      "fetchedAt": "2026-08-15"
+    },
+    "site": {
+      "emailAddress": "info@altbau-grocers.de"
+    }
+  }
+}

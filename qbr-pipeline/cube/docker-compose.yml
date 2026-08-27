@@ -1,0 +1,26 @@
+services:
+  cube:
+    # Pinned, never :latest. An unpinned demo rots silently.
+    image: cubejs/cube:v1.7.25
+    ports:
+      - "4000:4000"
+    environment:
+      CUBEJS_DEV_MODE: "true"
+      CUBEJS_DB_TYPE: duckdb
+      # Deliberately no CUBEJS_DB_DUCKDB_DATABASE_PATH. With no path the driver
+      # opens an in-memory DuckDB, and every cube reads parquet from the
+      # published serving directory instead.
+      #
+      # This is not a stylistic choice. Cube's DuckDB driver opens a database
+      # file read-write and exposes no read-only option, and DuckDB's file lock
+      # is exclusive to a single writer. Pointing Cube at the warehouse file
+      # would make the next `dbt build` fail with a lock error for as long as
+      # this container is up. Reading published parquet removes the shared file
+      # entirely, so the warehouse can rebuild while Cube keeps serving.
+      CUBEJS_API_SECRET: ${CUBEJS_API_SECRET:-dev-secret-not-for-production}
+      CUBEJS_LOG_LEVEL: warn
+    volumes:
+      - .:/cube/conf
+      # Read-only mount: the semantic layer consumes a published contract and
+      # has no business writing to it.
+      - ../data/serving:/data/serving:ro

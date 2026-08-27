@@ -1,0 +1,42 @@
+name: talon_qbr
+version: "1.0.0"
+config-version: 2
+
+profile: talon_qbr
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  # The quarter a QBR is being prepared for, and its comparison period.
+  # Kept here rather than hardcoded in models so the whole DAG can be pointed
+  # at a different quarter with `--vars`.
+  qbr_quarter: "2026-Q2"
+  qbr_prior_quarter: "2026-Q1"
+
+  # assert_reduction_ratio.sql fails if rpt_ grows past this. The funnel in the
+  # design doc is a tested invariant, not a slide.
+  max_rpt_rows: 8000
+
+models:
+  talon_qbr:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      # Views, not ephemeral. On DuckDB the storage cost is the same and an
+      # inspectable int_ layer is worth far more during a live demo.
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+    reporting:
+      # Published as parquet into data/serving/ so Cube never opens the DuckDB
+      # file. See README: Cube's DuckDB driver has no read-only mode.
+      +materialized: external
+      +format: parquet
+      +schema: reporting

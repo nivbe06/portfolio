@@ -1,0 +1,8 @@
+data/
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+cube/.env
+cube/.cubestore/
+__pycache__/
+*.pyc

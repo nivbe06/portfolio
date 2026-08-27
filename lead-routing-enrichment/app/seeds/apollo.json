@@ -1,0 +1,17 @@
+{
+  "fastcart.io": {
+    "person": {
+      "email": "mike@fastcart.io",
+      "sanitized_phone": "+14155550111",
+      "title": "CTO",
+      "linkedin_url": "https://linkedin.com/in/mike-fast"
+    },
+    "meta": {
+      "confidence": 0.76,
+      "updated_at": "2026-07-04"
+    },
+    "company": {
+      "generalEmail": "hello@fastcart.io"
+    }
+  }
+}

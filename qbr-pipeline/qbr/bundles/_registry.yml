@@ -1,0 +1,83 @@
+# The bundle registry.
+#
+# This file, and only this file, is what the model sees when it decides which
+# sections a QBR should contain. It is roughly 250 tokens. The model returns a
+# list of ids from it.
+#
+# That is the whole selection surface. The alternative, letting the model choose
+# freely across every measure and dimension in the semantic layer, is a
+# combinatorial space with no correctness check and nothing a human can review.
+# Choosing among nine enumerated options is verifiable, cacheable, and can be
+# audited by someone who does not read SQL.
+#
+# The model never composes a query. It picks an id; qbr/cube_client.py turns the
+# manifest into the Cube request deterministically.
+
+bundles:
+  - id: executive_summary
+    title: Executive summary
+    built: false
+    description: >
+      Three-sentence synthesis of the other selected sections. Always last to
+      generate because it reads their outputs.
+
+  - id: usage_volume
+    title: Usage and volume
+    built: false
+    description: >
+      Session evaluation volume and cart value against the previous quarter,
+      split by shopper segment. The baseline "are they using it more" question.
+
+  - id: feature_adoption
+    title: Feature adoption
+    built: true
+    description: >
+      Which engine capabilities the account fires, which are newly adopted or
+      lapsing, and which are covered by their plan but never used. Use when the
+      conversation is about depth of use or expansion headroom.
+
+  - id: campaign_performance
+    title: Campaign performance
+    built: true
+    description: >
+      Per-campaign redemptions, redemption rate and discount value with a
+      quarter-over-quarter comparison, sliced by shopper segment. Use when the
+      customer wants to know which promotions worked.
+
+  - id: loyalty_health
+    title: Loyalty health
+    built: false
+    description: >
+      Points issued against points burned, and the resulting outstanding
+      liability. Only relevant to accounts running a loyalty programme.
+
+  - id: integration_health
+    title: Integration health
+    built: false
+    description: >
+      API error rates and latency by application. Use when there were incidents
+      worth pre-empting, or when the account has raised reliability concerns.
+
+  - id: anomalies
+    title: Worth discussing
+    built: true
+    description: >
+      The handful of movements that are both statistically unusual and
+      commercially material, ranked. Use in almost every QBR; this is the
+      section that makes the review feel prepared rather than reported.
+
+  - id: relationship_context
+    title: Since we last spoke
+    built: true
+    description: >
+      What was agreed at the last review and where each action stands, plus the
+      calls and notes bearing on this quarter. The only section with no query
+      against the warehouse. Use in any QBR that follows a previous one.
+
+  - id: expansion_signals
+    title: Expansion signals
+    built: false
+    description: >
+      Paid features the account is entitled to but does not use, and capabilities
+      whose usage is growing fast enough to justify a bigger plan. Use when the
+      CSM is preparing a commercial conversation.

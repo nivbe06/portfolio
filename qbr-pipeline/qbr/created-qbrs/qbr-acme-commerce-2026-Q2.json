@@ -1,0 +1,244 @@
+{
+  "context": {
+    "tenant_id": "acme-commerce",
+    "tenant_name": "Acme Commerce",
+    "plan_tier": "Enterprise",
+    "country": "DE",
+    "currency": "EUR",
+    "quarter": "2026-Q2",
+    "prior_quarter": "2026-Q1",
+    "has_loyalty": true,
+    "sessions_evaluated": "101866",
+    "cart_value": "4775953.760000002",
+    "sessions_qoq": "0.0685057953532281",
+    "api_error_rate": "0.005583184761189828",
+    "net_points_outstanding": "547119"
+  },
+  "sections": [
+    {
+      "id": "feature_adoption",
+      "title": "Feature adoption",
+      "narrative": "Acme's engine usage grew across the board this quarter. showNotification led volume at 15,020 uses, up from 14,078. setDiscount followed at 13,261, up from 12,486, and addLoyaltyPoints rose to 5,911 from 5,578. The standout is rejectCoupon, which grew from 3,015 to 4,328 uses, a swing of roughly 44%, moving it from occasional use into a regular part of the flow.\n\nacceptCoupon is the one feature moving the other way, down from 4,909 to 4,183 uses, about a 15% decline. All five capabilities in this review are entitled and active; there is no unused entitlement to flag this quarter. Worth watching whether acceptCoupon's dip and rejectCoupon's rise are two sides of the same shift in how shoppers are responding at checkout.",
+      "grounded": true,
+      "figures_checked": 12,
+      "unverified": [],
+      "evidence": [],
+      "context_grounded": true,
+      "quotes_checked": 0,
+      "citations_used": [],
+      "unresolved_citations": [],
+      "unverified_quotes": [],
+      "figures": [
+        "<figure class=\"fig\"><figcaption class=\"fig-t\">Feature usage by quarter</figcaption><svg viewBox=\"0 0 760 260\" role=\"img\" aria-label=\"Feature usage by quarter\" class=\"chart\"><line x1=\"56\" y1=\"226.0\" x2=\"630\" y2=\"226.0\" class=\"grid\"/><text x=\"48\" y=\"230.0\" class=\"c-ax\" text-anchor=\"end\">0</text><line x1=\"56\" y1=\"122.0\" x2=\"630\" y2=\"122.0\" class=\"grid\"/><text x=\"48\" y=\"126.0\" class=\"c-ax\" text-anchor=\"end\">7,510</text><line x1=\"56\" y1=\"18.0\" x2=\"630\" y2=\"18.0\" class=\"grid\"/><text x=\"48\" y=\"22.0\" class=\"c-ax\" text-anchor=\"end\">15,020</text><text x=\"56.0\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q1</text><text x=\"170.8\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q2</text><text x=\"285.6\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q3</text><text x=\"400.4\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q4</text><text x=\"515.2\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2026-Q1</text><text x=\"630.0\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2026-Q2</text><polyline points=\"56.0,74.0 170.8,64.0 285.6,47.9 400.4,36.3 515.2,31.0 630.0,18.0\" fill=\"none\" stroke=\"var(--s1)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"74.0\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"170.8\" cy=\"64.0\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"285.6\" cy=\"47.9\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"400.4\" cy=\"36.3\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"515.2\" cy=\"31.0\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"630.0\" cy=\"18.0\" r=\"2.6\" fill=\"var(--s1)\"/><text x=\"640.0\" y=\"22.0\" class=\"c-val\" fill=\"var(--s1)\">showNotification</text><polyline points=\"56.0,94.7 170.8,80.7 285.6,69.9 400.4,61.4 515.2,53.1 630.0,42.4\" fill=\"none\" stroke=\"var(--s2)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"94.7\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"170.8\" cy=\"80.7\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"285.6\" cy=\"69.9\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"400.4\" cy=\"61.4\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"515.2\" cy=\"53.1\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"630.0\" cy=\"42.4\" r=\"2.6\" fill=\"var(--s2)\"/><text x=\"640.0\" y=\"46.4\" class=\"c-val\" fill=\"var(--s2)\">setDiscount</text><polyline points=\"56.0,164.8 170.8,161.1 285.6,156.4 400.4,149.9 515.2,148.8 630.0,144.1\" fill=\"none\" stroke=\"var(--s3)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"164.8\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"170.8\" cy=\"161.1\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"285.6\" cy=\"156.4\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"400.4\" cy=\"149.9\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"515.2\" cy=\"148.8\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"630.0\" cy=\"144.1\" r=\"2.6\" fill=\"var(--s3)\"/><text x=\"640.0\" y=\"148.1\" class=\"c-val\" fill=\"var(--s3)\">addLoyaltyPoints</text><polyline points=\"56.0,172.6 170.8,167.8 285.6,162.9 400.4,159.7 515.2,158.0 630.0,168.1\" fill=\"none\" stroke=\"var(--s4)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"172.6\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"170.8\" cy=\"167.8\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"285.6\" cy=\"162.9\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"400.4\" cy=\"159.7\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"515.2\" cy=\"158.0\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"630.0\" cy=\"168.1\" r=\"2.6\" fill=\"var(--s4)\"/><text x=\"640.0\" y=\"172.1\" class=\"c-val\" fill=\"var(--s4)\">acceptCoupon</text><polyline points=\"56.0,192.3 170.8,190.3 285.6,187.1 400.4,185.8 515.2,184.2 630.0,166.1\" fill=\"none\" stroke=\"var(--s5)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"192.3\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"170.8\" cy=\"190.3\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"285.6\" cy=\"187.1\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"400.4\" cy=\"185.8\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"515.2\" cy=\"184.2\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"630.0\" cy=\"166.1\" r=\"2.6\" fill=\"var(--s5)\"/><text x=\"640.0\" y=\"170.1\" class=\"c-val\" fill=\"var(--s5)\">rejectCoupon</text></svg></figure>",
+        "<figure class=\"fig\"><figcaption class=\"fig-t\">Adoption state this quarter</figcaption><div class=\"t-wrap\"><table><thead><tr><th>feature</th><th>adoption state</th><th>usage count</th><th>usage qoq</th><th>is entitled</th></tr></thead><tbody><tr><td class=\"\">showNotification</td><td class=\"\">steady</td><td class=\"t-num\">15,020</td><td class=\"t-num\">+6.7%</td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">setDiscount</td><td class=\"\">steady</td><td class=\"t-num\">13,261</td><td class=\"t-num\">+6.2%</td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">addLoyaltyPoints</td><td class=\"\">steady</td><td class=\"t-num\">5,911</td><td class=\"t-num\">+6.0%</td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">rejectCoupon</td><td class=\"\">growing</td><td class=\"t-num\">4,328</td><td class=\"t-num\">+43.5%</td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">acceptCoupon</td><td class=\"\">steady</td><td class=\"t-num\">4,183</td><td class=\"t-num\">-14.8%</td><td class=\"t-bool\">yes</td></tr></tbody></table></div></figure>"
+      ],
+      "ranking": {}
+    },
+    {
+      "id": "anomalies",
+      "title": "Worth discussing",
+      "narrative": "The one movement worth raising this quarter is the redemption rate on Winback Reactivation, a paid feature. It landed at 48.2% for the week of 6 April, against a usual rate of 61.5%, a drop of about 21.6%. Because Winback sits behind a paid entitlement and the movement runs counter to where the account wants it, it is worth a direct conversation rather than a passing mention.\n\nAcme has already explained the cause themselves. On the 6 May check-in, Priya Raman and Tomas Lindqvist told the account team: \"We cut the winback audience down to ninety days in the first week of April, and honestly we expected the redemption rate to drop. That was the trade.\" [C1] The narrower audience is a deliberate choice on Acme's side, not a signal of campaign fatigue. The conversation worth having is whether the narrower audience is still producing the volume and quality of reactivation Acme wants, now that it has had a full quarter to run.",
+      "grounded": true,
+      "figures_checked": 3,
+      "unverified": [],
+      "evidence": [
+        {
+          "source": "gong",
+          "source_id": "gong-2026-05-06-001",
+          "title": "Quarterly check-in, Acme Commerce",
+          "date": "2026-05-06",
+          "participants": [
+            "Priya Raman (Acme, Head of CRM)",
+            "Tomas Lindqvist (Acme, Growth Marketing)",
+            "account team"
+          ],
+          "snippet": "\"We cut the winback audience down to ninety days in the first week of April, and honestly we expected the redemption rate to drop. That was the trade.\"",
+          "score": 4.207,
+          "explains": {
+            "entity_label": "Winback Reactivation",
+            "metric_name": "redemption_rate"
+          },
+          "citation_id": "C1"
+        }
+      ],
+      "context_grounded": true,
+      "quotes_checked": 1,
+      "citations_used": [
+        "C1"
+      ],
+      "unresolved_citations": [],
+      "unverified_quotes": [],
+      "figures": [
+        "<figure class=\"fig\"><figcaption class=\"fig-t\">Ranked by materiality, not by statistical significance</figcaption><div class=\"t-wrap\"><table><thead><tr><th>entity label</th><th>metric name</th><th>week start</th><th>metric value</th><th>baseline mean</th><th>salience</th></tr></thead><tbody><tr class=\"row-hl\"><td class=\"\">Winback Reactivation</td><td class=\"\">redemption rate</td><td class=\"\">2026-04-06</td><td class=\"t-num\">48.2%</td><td class=\"t-num\">61.5%</td><td class=\"t-num\">35.9</td></tr></tbody></table></div></figure>"
+      ],
+      "ranking": {
+        "ranked": [
+          {
+            "metric_name": "redemption_rate",
+            "entity_type": "campaign",
+            "entity_label": "Winback Reactivation",
+            "week_start": "2026-04-06T00:00:00.000",
+            "is_paid_feature": true,
+            "affects_revenue": true,
+            "is_increase": false,
+            "z_score": "-4.058819862688996",
+            "metric_value": "0.482258064516129",
+            "baseline_mean": "0.6149750641584188",
+            "relative_change": "-0.21580874961801974",
+            "movement_magnitude": "82.2845397782197",
+            "value_weight": "0.5",
+            "volume": "620",
+            "salience": 0.3594,
+            "salience_reasons": [
+              "sits behind a paid entitlement",
+              "moving in the wrong direction"
+            ],
+            "is_deterioration": true
+          }
+        ],
+        "suppressed": [
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "rejectCoupon",
+            "week_start": "2026-04-06T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": false,
+            "is_increase": true,
+            "z_score": "3.554574517435244",
+            "metric_value": "321",
+            "baseline_mean": "235.5",
+            "relative_change": "0.3630573248407643",
+            "movement_magnitude": "85.5",
+            "value_weight": "0.2",
+            "volume": "321",
+            "salience": 0.024,
+            "salience_reasons": [],
+            "is_deterioration": false
+          },
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "setDiscount",
+            "week_start": "2026-05-04T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": false,
+            "z_score": "-2.843511155838205",
+            "metric_value": "961",
+            "baseline_mean": "1009.25",
+            "relative_change": "-0.04780777805300966",
+            "movement_magnitude": "48.25",
+            "value_weight": "1",
+            "volume": "961",
+            "salience": 0.0308,
+            "salience_reasons": [
+              "moving in the wrong direction"
+            ],
+            "is_deterioration": true
+          },
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "setDiscount",
+            "week_start": "2026-06-01T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "2.7834496526700256",
+            "metric_value": "1083",
+            "baseline_mean": "1013.375",
+            "relative_change": "0.06870605649438756",
+            "movement_magnitude": "69.625",
+            "value_weight": "1",
+            "volume": "1083",
+            "salience": 0.0347,
+            "salience_reasons": [],
+            "is_deterioration": false
+          },
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "acceptCoupon",
+            "week_start": "2026-04-06T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": false,
+            "z_score": "-2.746499043774724",
+            "metric_value": "299",
+            "baseline_mean": "376",
+            "relative_change": "-0.2047872340425532",
+            "movement_magnitude": "77",
+            "value_weight": "0.9",
+            "volume": "299",
+            "salience": 0.1033,
+            "salience_reasons": [
+              "moving in the wrong direction"
+            ],
+            "is_deterioration": true
+          },
+          {
+            "metric_name": "discount_value",
+            "entity_type": "campaign",
+            "entity_label": "Basket Boost",
+            "week_start": "2026-05-25T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "2.7184690966008684",
+            "metric_value": "4752.96",
+            "baseline_mean": "4364.84",
+            "relative_change": "0.08891963966605874",
+            "movement_magnitude": "388.1199999999999",
+            "value_weight": "0.5",
+            "volume": "1389",
+            "salience": 0.0882,
+            "salience_reasons": [],
+            "is_deterioration": false
+          }
+        ],
+        "candidate_count": 8,
+        "salience_floor": 0.15
+      }
+    },
+    {
+      "id": "relationship_context",
+      "title": "Since we last spoke",
+      "narrative": "Two of the three actions from the last review are closed. Acme reviewed Winback Reactivation eligibility against margin ahead of the Q2 refresh and narrowed the eligibility window, a commitment now marked done. The account team's commitment to share Basket Boost segment performance so Acme could plan Q3 budget is also done.\n\nOne action remains open: agreeing a points expiry or redemption catalogue so the loyalty balance stops accruing unchecked. This sits with Acme, was raised again on a recent call, and is still unscheduled. Worth putting a date on it this quarter.",
+      "grounded": true,
+      "figures_checked": 0,
+      "unverified": [],
+      "evidence": [],
+      "context_grounded": true,
+      "quotes_checked": 0,
+      "citations_used": [],
+      "unresolved_citations": [],
+      "unverified_quotes": [],
+      "figures": [],
+      "ranking": {}
+    }
+  ],
+  "kpis": [
+    "<div class=\"kpi\"><div class=\"k\">Sessions evaluated</div><div class=\"v up\">101,866</div><div class=\"d\">+6.9% on last quarter</div></div>",
+    "<div class=\"kpi\"><div class=\"k\">Cart value seen</div><div class=\"v\">4,775,954</div><div class=\"d\">EUR</div></div>",
+    "<div class=\"kpi\"><div class=\"k\">API error rate</div><div class=\"v\">0.6%</div><div class=\"d\">across all applications</div></div>",
+    "<div class=\"kpi\"><div class=\"k\">Loyalty points outstanding</div><div class=\"v\">547,119</div><div class=\"d\">issued minus burned</div></div>"
+  ],
+  "provenance": {
+    "registry_size": 9,
+    "context_corpus": {
+      "documents_available": 6,
+      "documents_searchable": 5,
+      "withheld_internal": 1,
+      "sources": [
+        "commitment",
+        "gong",
+        "salesforce_case",
+        "salesforce_note"
+      ]
+    },
+    "evidence_cited": 1,
+    "anomaly_candidates": 8,
+    "anomaly_surfaced": 1
+  }
+}

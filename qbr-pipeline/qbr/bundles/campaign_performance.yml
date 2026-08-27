@@ -1,0 +1,83 @@
+id: campaign_performance
+title: Campaign performance
+version: 1
+
+# Skip the section entirely rather than print an empty table. Evaluated against
+# the account context the wizard already fetched.
+include_when: "campaigns_active_in_period >= 1"
+
+query:
+  view: qbr_campaigns
+  measures:
+    - redemptions
+    - redemption_attempts
+    - redemption_rate
+    - prior_redemption_rate
+    - redemption_rate_qoq
+    - discount_value
+    - discount_value_qoq
+  dimensions:
+    - campaign_name
+    - campaign_type
+    - is_paid_feature
+  filters:
+    - member: quarter_label
+      operator: equals
+      values: ["{quarter}"]
+  order:
+    - [discount_value, desc]
+  limit: 20
+
+# A second query at a finer grain, so the narrative can attribute a movement to
+# a segment rather than just report it. Without this, "concentrated in returning
+# shoppers" is not answerable and the model would have to guess, which is
+# exactly what it must never do.
+breakdown:
+  view: qbr_campaigns
+  measures: [redemptions, redemption_attempts, redemption_rate, prior_redemption_rate, redemption_rate_qoq]
+  dimensions: [campaign_name, profile_segment]
+  filters:
+    - member: quarter_label
+      operator: equals
+      values: ["{quarter}"]
+  order:
+    - [redemptions, desc]
+  limit: 60
+
+# Trend series for the chart, all quarters rather than just the current one.
+trend:
+  view: qbr_campaigns
+  measures: [redemption_rate, discount_value]
+  dimensions: [quarter_label, campaign_name]
+  order:
+    - [quarter_label, asc]
+  limit: 200
+
+charts:
+  - type: grouped_bar
+    title: Redemption rate, this quarter against last
+    series: [prior_redemption_rate, redemption_rate]
+    by: campaign_name
+    format: percent
+    source: query
+  - type: line
+    title: Redemption rate by quarter
+    metric: redemption_rate
+    by: quarter_label
+    group: campaign_name
+    format: percent
+    source: trend
+
+narrative:
+  must_cover:
+    - The single largest quarter-over-quarter mover, named, with both values
+    - Whether that movement concentrates in one shopper segment, using the breakdown
+    - One forward-looking hook the CSM can open a conversation with
+  must_not:
+    - Speculating about causes that are not present in the data
+    - Any figure that does not appear in the payload
+    - Recommending a specific discount level or commercial term
+  tone: >
+    A CSM presenting to their customer. Factual and specific. No hype, no
+    apology, no filler. Name campaigns by name.
+  max_words: 130

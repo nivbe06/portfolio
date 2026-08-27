@@ -1,0 +1,75 @@
+id: anomalies
+title: Worth discussing
+version: 1
+
+include_when: "always"
+
+# Note the limit. The pipeline flags every statistically unusual movement, which
+# is far more than belongs in a QBR. This query pulls the candidates; the
+# ranking that cuts them to a handful is qbr/salience.py, because materiality is
+# business logic, not statistics.
+query:
+  view: qbr_anomalies
+  measures:
+    - z_score
+    - metric_value
+    - baseline_mean
+    - relative_change
+    - movement_magnitude
+    - value_weight
+    - volume
+  dimensions:
+    - metric_name
+    - entity_type
+    - entity_label
+    - week_start
+    - is_paid_feature
+    - affects_revenue
+    - is_increase
+  filters:
+    - member: quarter_label
+      operator: equals
+      values: ["{quarter}"]
+  order:
+    - [movement_magnitude, desc]
+  limit: 200
+
+# Evidence retrieval. Each surfaced movement is used as a query against the
+# account-context corpus (Gong calls, Salesforce notes and cases) so the
+# narrative can say *why* a number moved, in the customer's own words, rather
+# than reporting that it moved and stopping there.
+#
+# The retrieval is driven by the ranked movements, not by free search: salience
+# has already decided what is material, and searching for whatever seems
+# interesting has no correct answer. A movement with nothing above the score
+# floor gets no evidence, which is the honest outcome when nobody wrote anything
+# down.
+context:
+  evidence_for_movements: true
+  per_movement: 1
+
+charts:
+  - type: salience_table
+    # No z_score column. The narrative rules below forbid mentioning z-scores to
+    # the customer, and a table that prints one contradicts them. The z-score is
+    # how a movement got nominated, not why it is being discussed; the customer
+    # needs the observed value, the baseline it is being compared against, and
+    # the ranking that decided it was worth their time.
+    title: Ranked by materiality, not by statistical significance
+    columns: [entity_label, metric_name, week_start, metric_value, baseline_mean, salience]
+    source: ranked
+
+narrative:
+  must_cover:
+    - Each ranked movement, named, with its observed value and its baseline
+    - Why it is worth raising, in business terms rather than statistical ones
+    - What the CSM should ask or say about it
+  must_not:
+    - Mentioning z-scores or standard deviations to the customer
+    - Any movement not present in the ranked payload
+    - Any figure that does not appear in the payload
+    - Asserting a cause the data does not establish
+  tone: >
+    A CSM who has done their homework. Lead with what it means for the customer,
+    not with how it was detected. Direct, no alarm.
+  max_words: 160

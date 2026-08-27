@@ -1,0 +1,107 @@
+[
+  {
+    "domain": "acme-commerce.com",
+    "company_name": "Acme Commerce",
+    "email": "anna.mueller@acme-commerce.com",
+    "existing": {
+      "country": "Germany",
+      "industry": null,
+      "employee_count": null,
+      "ecommerce_platform": null,
+      "contact_email": null,
+      "contact_phone": null,
+      "seniority_function": null
+    },
+    "_demo_note": "Clean fill. country is first-party (present) -> kept, no provider call for it."
+  },
+  {
+    "domain": "shopnord.de",
+    "company_name": "ShopNord",
+    "email": "lars@shopnord.de",
+    "existing": {
+      "industry": null,
+      "country": null,
+      "employee_count": null,
+      "ecommerce_platform": null,
+      "contact_email": null,
+      "contact_phone": null,
+      "seniority_function": null
+    },
+    "_demo_note": "industry 'Software' -> LLM tail -> SaaS (cached). platform 'sfcc' + country 'Deutschland' -> deterministic map."
+  },
+  {
+    "domain": "fastcart.io",
+    "company_name": "FastCart",
+    "email": "mike@fastcart.io",
+    "existing": {
+      "industry": null,
+      "country": null,
+      "employee_count": null,
+      "ecommerce_platform": null,
+      "contact_email": null,
+      "contact_phone": null,
+      "seniority_function": null
+    },
+    "_demo_note": "ZoomInfo phone '030555111' fails E.164 -> waterfall -> Apollo returns valid."
+  },
+  {
+    "domain": "bahnpay.de",
+    "company_name": "BahnPay",
+    "email": "paula@bahnpay.de",
+    "existing": {
+      "industry": null,
+      "country": null,
+      "employee_count": null,
+      "ecommerce_platform": null,
+      "contact_email": null,
+      "contact_phone": null,
+      "seniority_function": null
+    },
+    "_demo_note": "employee_count 0 -> HARD_FAIL -> dropped to review, no waterfall. title 'Director of Growth' -> LLM tail."
+  },
+  {
+    "domain": "",
+    "company_name": "Loyal Nordic",
+    "contact_name": "Niv B",
+    "email": "niv@gmail.com",
+    "existing": {
+      "contact_email": "niv@gmail.com",
+      "industry": null,
+      "country": null,
+      "employee_count": null,
+      "ecommerce_platform": null,
+      "contact_phone": null,
+      "seniority_function": null
+    },
+    "_demo_note": "PLG signup w/ personal email + company name. Resolve 'Loyal Nordic' -> loyalnordic.se, harvest corp email (niv@gmail.com -> niv.b@loyalnordic.se) + firmographics."
+  },
+  {
+    "domain": "nordicliving.se",
+    "company_name": "Nordic Living",
+    "email": "sara@nordicliving.se",
+    "existing": {
+      "industry": null, "country": null, "employee_count": null,
+      "ecommerce_platform": null, "contact_email": null,
+      "contact_phone": null, "seniority_function": null
+    },
+    "_demo_note": "Provider industry 'lifestyle brand' is genuinely ambiguous -> AI maps it (Retail/Ecommerce) at LOW confidence (~0.6-0.7) -> flagged for review, AI number renders amber."
+  },
+  {
+    "domain": "altbau-grocers.de",
+    "company_name": "Altbau Grocers",
+    "email": "mara@altbau-grocers.de",
+    "existing": {
+      "industry": "Speciality Grocery", "country": null, "employee_count": null,
+      "ecommerce_platform": null, "contact_email": null,
+      "contact_phone": null, "seniority_function": null
+    },
+    "_demo_note": "Overwrite chosen for industry (existing 'Speciality Grocery'), but no provider returns an industry -> keep-existing data-safety fires -> 'kept existing' badge, value never blanked. Other fields fill normally."
+  },
+  {
+    "domain": "",
+    "company_name": "unknown",
+    "email": "someone@gmail.com",
+    "existing": {},
+    "_demo_note": "Free email, no company, no name -> nothing to query -> Gate A skip. Zero spend."
+  }
+]

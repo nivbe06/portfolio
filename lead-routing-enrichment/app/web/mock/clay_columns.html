@@ -1,0 +1,143 @@
+<title>Provider Columns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#02043B; --surface:#0A0E45; --surface-2:#151B63; --surface-3:#1E2678;
+    --border:#282F6B; --border-hi:#3A4488;
+    --ink:#F5F6FA; --muted:#AEB2E0; --faint:#7D82BE;
+    --accent:#CCF87D; --accent-ink:#00434C; --accent-dim:rgba(204,248,125,.14);
+    --good:#CCF87D; --warn:#FFC24B; --bad:#FF6B6B; --info:#5B8DEF;
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+    --r:16px; --r-sm:10px; --pill:999px;
+    --mono:ui-monospace,SFMono-Regular,"IBM Plex Mono",Menlo,monospace;
+    --sans:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --disp:"Syne","Outfit",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1320px;margin:0 auto;padding:var(--s6) var(--s5) var(--s6)}
+  .kick{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 var(--s2)}
+  h1{font-family:var(--disp);font-weight:600;letter-spacing:normal;font-size:34px;line-height:1.08;margin:0}
+  .sub{color:var(--muted);font-size:15px;margin:var(--s2) 0 0;max-width:62ch}
+
+  /* scope strip: cost as scope, before spend */
+  .scope{display:flex;flex-wrap:wrap;gap:var(--s5);align-items:flex-start;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+    padding:var(--s4) var(--s5);margin:var(--s5) 0 var(--s4)}
+  .stat{display:flex;flex-direction:column;gap:2px}
+  .stat .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .stat .l{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);font-weight:600}
+  .stat.hi .n{color:var(--accent)}
+  .stat.warnv .n{color:var(--warn)}
+  .scope .rule{width:1px;align-self:stretch;background:var(--border)}
+  .saved{flex:1;min-width:260px;color:var(--muted);font-size:12px;border-left:2px solid var(--accent);padding-left:var(--s3)}
+  .saved b{color:var(--ink)}
+
+  .tscroll{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--surface)}
+  table{border-collapse:separate;border-spacing:0;font-size:13px;width:100%}
+
+  th,td{text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--border);vertical-align:top}
+
+  /* provider group header */
+  th.pg{border-bottom:1px solid var(--border-hi);border-left:1px solid var(--border-hi);
+    background:var(--surface-2);padding:var(--s3);white-space:nowrap}
+  th.pg .pname{display:flex;align-items:center;gap:var(--s2);font-family:var(--sans);font-weight:600;font-size:15px;color:var(--ink)}
+  th.pg .pmeta{display:block;font-family:var(--mono);font-size:11px;color:var(--accent);margin-top:3px;font-variant-numeric:tabular-nums}
+  th.pg .pnote{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);font-weight:600;margin-top:2px}
+  th.pg.fp .pmeta{color:var(--muted)}
+  th.pg.off{background:var(--surface);opacity:.55}
+  th.pg.off .pname{color:var(--faint)}
+  th.pg.off .pmeta{color:var(--faint)}
+  th.pg.off .pnote{color:var(--faint);text-transform:none;letter-spacing:0;font-size:11px;font-weight:500;white-space:normal;max-width:22ch}
+  .role{font-family:var(--sans);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    padding:2px 6px;border-radius:var(--pill);border:1px solid}
+  .role.primary{color:var(--accent);border-color:var(--accent);background:var(--accent-dim)}
+  .role.fallback{color:var(--warn);border-color:rgba(255,194,75,.4);background:rgba(255,194,75,.1)}
+
+  /* field header */
+  th.fh{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);
+    background:var(--surface);border-bottom:1px solid var(--border-hi);white-space:nowrap}
+  th.fh.off{color:var(--border-hi)}
+
+  th.rowhead{background:var(--surface);position:sticky;left:0;z-index:2;border-right:1px solid var(--border-hi);min-width:190px}
+  thead th.rowhead{z-index:3;font-family:var(--sans);font-size:15px;font-weight:600;color:var(--ink);vertical-align:bottom}
+  tbody th.rowhead .co{display:block;font-weight:600;color:var(--ink)}
+  tbody th.rowhead .key{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:1px}
+
+  td.c{white-space:nowrap}
+  td.c .v{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink)}
+  td.c .dash{color:var(--border-hi);font-family:var(--mono)}
+  .tag{display:inline-block;margin-top:3px;font-size:10px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;padding:1px 6px;border-radius:var(--pill);border:1px solid transparent}
+  .t-det{color:var(--muted);border-color:var(--border-hi);background:var(--surface-2)}
+  .t-ai{color:var(--info);border-color:rgba(91,141,239,.45);background:rgba(91,141,239,.12)}
+  .t-kept{color:var(--faint);border-color:var(--border);background:transparent}
+  .t-miss{color:var(--faint);border-color:var(--border);background:transparent}
+  .t-lost{color:var(--warn);border-color:rgba(255,194,75,.35);background:transparent;text-transform:none;letter-spacing:0}
+  .t-skip{color:var(--warn);border-color:rgba(255,194,75,.45);background:rgba(255,194,75,.1)}
+  .t-run{color:var(--faint);border-color:var(--border);background:transparent;text-transform:none;letter-spacing:0;font-family:var(--sans)}
+  td.kept .v{color:var(--faint)}
+  td.ai{background:rgba(91,141,239,.06)}
+  td.ai.low{box-shadow:inset 2px 0 0 var(--warn)}
+  td.miss .dash{color:var(--faint)}
+  td.skip{background:repeating-linear-gradient(135deg,transparent,transparent 6px,rgba(125,130,190,.07) 6px,rgba(125,130,190,.07) 7px)}
+  td.status .v{color:var(--accent)}
+  td.status .why{display:block;font-size:11px;color:var(--faint);white-space:normal;max-width:34ch;margin-top:2px}
+  tr.skipped th.rowhead .co{color:var(--muted)}
+  tbody tr:hover td:not(.skip){background:var(--surface-2)}
+  tbody tr:hover th.rowhead{background:var(--surface-2)}
+  tbody tr:last-child td,tbody tr:last-child th{border-bottom:none}
+
+  .legend{display:flex;flex-wrap:wrap;gap:var(--s4);margin-top:var(--s4);color:var(--muted);font-size:12px;align-items:center}
+  .legend .item{display:flex;align-items:center;gap:6px}
+  .note{margin-top:var(--s5);color:var(--muted);font-size:12px;max-width:86ch;border-top:1px solid var(--border);padding-top:var(--s4)}
+  .note b{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <p class="kick">Design mock &middot; provider-as-column</p>
+  <h1>Enrichment run: what each provider was asked for, and what it cost</h1>
+  <p class="sub">Same run as the live app (demo batch A), re-laid out Clay-style: one column group per
+  provider, one column per field that provider owns. Uncalled providers stay on screen, greyed, with the
+  reason they were skipped, so the anti-fire-all rule is a visible artefact rather than a backend virtue.</p>
+
+  <div class="scope">
+    <div class="stat"><span class="n">8</span><span class="l">accounts</span></div>
+    <div class="rule"></div>
+    <div class="stat"><span class="n">15</span><span class="l">provider lookups</span></div>
+    <div class="stat"><span class="n">3</span><span class="l">AI mappings</span></div>
+    <div class="stat warnv"><span class="n">8</span><span class="l">to review</span></div>
+    <div class="rule"></div>
+    <div class="stat hi"><span class="n">$5.30</span><span class="l">run cost</span></div>
+    <div class="rule"></div>
+    <p class="saved">Crunchbase never called, no requested field lists them as primary.
+    <b>$0.70 not spent</b> on this run.</p>
+  </div>
+
+  <div class="tscroll">
+    <table>
+      <thead>
+        <tr><th class="rowhead" rowspan="2">Account</th><th class="pg fp" colspan="1"><span class="pname">Input</span><span class="pmeta">$0.00 &middot; no lookup</span><span class="pnote">what the CSV already had</span></th><th class="pg" colspan="5"><span class="pname">Clearbit<span class="role primary">primary</span></span><span class="pmeta">$1.40 &middot; 7 calls &middot; $0.20/call</span><span class="pnote">5 fields</span></th><th class="pg" colspan="3"><span class="pname">ZoomInfo<span class="role primary">primary</span></span><span class="pmeta">$3.50 &middot; 7 calls &middot; $0.50/call</span><span class="pnote">3 fields</span></th><th class="pg" colspan="1"><span class="pname">Apollo<span class="role fallback">fallback</span></span><span class="pmeta">$0.40 &middot; 1 call &middot; $0.40/call</span><span class="pnote">1 field</span></th><th class="pg off" colspan="1"><span class="pname">Crunchbase</span><span class="pmeta">$0.00 &middot; 0 calls</span><span class="pnote">not called &middot; owns no missing field in this run</span></th></tr>
+        <tr><th class="fh">status</th><th class="fh">industry</th><th class="fh">employees</th><th class="fh">country</th><th class="fh">platform</th><th class="fh">company email</th><th class="fh">contact email</th><th class="fh">contact phone</th><th class="fh">seniority</th><th class="fh">contact phone</th><th class="fh off">&mdash;</th></tr>
+      </thead>
+      <tbody><tr><th class="rowhead"><span class="co">Acme Commerce</span><span class="key">acme-commerce.com</span></th><td class="c status"><span class="v">$0.70</span><span class="tag t-run">Clearbit, ZoomInfo</span></td><td class="c det"><span class="v">Ecommerce</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c det"><span class="v">850</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c notasked"><span class="dash">&mdash;</span><span class="tag t-kept">not asked &middot; kept</span></td><td class="c det"><span class="v">Shopify</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c det"><span class="v">info@acme-commerce.com</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c det"><span class="v">anna.mueller@acme-commerce.com</span><span class="tag t-det">match &middot; 0.85</span></td><td class="c det"><span class="v">+498912345678</span><span class="tag t-det">match &middot; 0.85</span></td><td class="c det"><span class="v">crm_leader</span><span class="tag t-det">match &middot; 0.85</span></td><td class="c notasked"><span class="dash">&mdash;</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr><th class="rowhead"><span class="co">ShopNord</span><span class="key">shopnord.de</span></th><td class="c status"><span class="v">$0.70</span><span class="tag t-run">Clearbit, ZoomInfo</span></td><td class="c det"><span class="v">SaaS</span><span class="tag t-det">match &middot; 0.70</span></td><td class="c det"><span class="v">300</span><span class="tag t-det">match &middot; 0.70</span></td><td class="c det"><span class="v">Germany</span><span class="tag t-det">match &middot; 0.70</span></td><td class="c det"><span class="v">Salesforce Commerce Cloud</span><span class="tag t-det">match &middot; 0.70</span></td><td class="c det"><span class="v">info@shopnord.de</span><span class="tag t-det">match &middot; 0.70</span></td><td class="c det"><span class="v">lars@shopnord.de</span><span class="tag t-det">match &middot; 0.80</span></td><td class="c det"><span class="v">+4630111222</span><span class="tag t-det">match &middot; 0.80</span></td><td class="c det"><span class="v">growth_leader</span><span class="tag t-det">match &middot; 0.80</span></td><td class="c notasked"><span class="dash">&mdash;</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr><th class="rowhead"><span class="co">FastCart</span><span class="key">fastcart.io</span></th><td class="c status"><span class="v">$1.10</span><span class="tag t-run">Apollo, Clearbit, ZoomInfo</span></td><td class="c det"><span class="v">Retail</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">120</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">United States</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">commercetools</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">info@fastcart.io</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">mike@fastcart.io</span><span class="tag t-det">match &middot; 0.60</span></td><td class="c lost"><span class="dash">&mdash;</span><span class="tag t-lost">failed &rarr; Apollo</span></td><td class="c det"><span class="v">eng_leader</span><span class="tag t-det">match &middot; 0.60</span></td><td class="c det"><span class="v">+14155550111</span><span class="tag t-det">match &middot; 0.76</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr><th class="rowhead"><span class="co">BahnPay</span><span class="key">bahnpay.de</span></th><td class="c status"><span class="v">$0.70</span><span class="tag t-run">Clearbit, ZoomInfo</span></td><td class="c det"><span class="v">Fintech</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c lost"><span class="dash">&mdash;</span><span class="tag t-lost">failed &rarr; nothing</span></td><td class="c det"><span class="v">Germany</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c det"><span class="v">custom</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c det"><span class="v">info@bahnpay.de</span><span class="tag t-det">match &middot; 0.90</span></td><td class="c det"><span class="v">paula@bahnpay.de</span><span class="tag t-det">match &middot; 0.82</span></td><td class="c det"><span class="v">+4930999888</span><span class="tag t-det">match &middot; 0.82</span></td><td class="c det"><span class="v">growth_leader</span><span class="tag t-det">match &middot; 0.82</span></td><td class="c notasked"><span class="dash">&mdash;</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr><th class="rowhead"><span class="co">Loyal Nordic</span><span class="key">niv@gmail.com</span></th><td class="c status"><span class="v">$0.70</span><span class="tag t-run">Clearbit, ZoomInfo</span></td><td class="c det"><span class="v">Retail</span><span class="tag t-det">match &middot; 0.88</span></td><td class="c det"><span class="v">600</span><span class="tag t-det">match &middot; 0.88</span></td><td class="c det"><span class="v">Sweden</span><span class="tag t-det">match &middot; 0.88</span></td><td class="c det"><span class="v">Shopify</span><span class="tag t-det">match &middot; 0.88</span></td><td class="c det"><span class="v">info@loyalnordic.se</span><span class="tag t-det">match &middot; 0.88</span></td><td class="c det"><span class="v">niv.b@loyalnordic.se</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">+46812345678</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c det"><span class="v">loyalty_leader</span><span class="tag t-det">match &middot; 0.83</span></td><td class="c notasked"><span class="dash">&mdash;</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr><th class="rowhead"><span class="co">Nordic Living</span><span class="key">nordicliving.se</span></th><td class="c status"><span class="v">$0.70</span><span class="tag t-run">Clearbit, ZoomInfo</span></td><td class="c ai low"><span class="v">Retail</span><span class="tag t-ai">AI map &middot; 0.65</span></td><td class="c det"><span class="v">150</span><span class="tag t-det">match &middot; 0.86</span></td><td class="c det"><span class="v">Sweden</span><span class="tag t-det">match &middot; 0.86</span></td><td class="c det"><span class="v">Shopify</span><span class="tag t-det">match &middot; 0.86</span></td><td class="c det"><span class="v">info@nordicliving.se</span><span class="tag t-det">match &middot; 0.86</span></td><td class="c det"><span class="v">sara@nordicliving.se</span><span class="tag t-det">match &middot; 0.84</span></td><td class="c det"><span class="v">+46855512345</span><span class="tag t-det">match &middot; 0.84</span></td><td class="c det"><span class="v">crm_leader</span><span class="tag t-det">match &middot; 0.84</span></td><td class="c notasked"><span class="dash">&mdash;</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr><th class="rowhead"><span class="co">Altbau Grocers</span><span class="key">altbau-grocers.de</span></th><td class="c status"><span class="v">$0.70</span><span class="tag t-run">Clearbit, ZoomInfo</span></td><td class="c notasked"><span class="dash">&mdash;</span><span class="tag t-kept">not asked &middot; kept</span></td><td class="c det"><span class="v">45</span><span class="tag t-det">match &middot; 0.81</span></td><td class="c det"><span class="v">Germany</span><span class="tag t-det">match &middot; 0.81</span></td><td class="c ai"><span class="v">custom</span><span class="tag t-ai">AI map &middot; 0.85</span></td><td class="c det"><span class="v">info@altbau-grocers.de</span><span class="tag t-det">match &middot; 0.81</span></td><td class="c det"><span class="v">mara@altbau-grocers.de</span><span class="tag t-det">match &middot; 0.79</span></td><td class="c det"><span class="v">+493055512345</span><span class="tag t-det">match &middot; 0.79</span></td><td class="c ai"><span class="v">growth_leader</span><span class="tag t-ai">AI map &middot; 0.75</span></td><td class="c notasked"><span class="dash">&mdash;</span></td><td class="c skip"><span class="dash">&mdash;</span></td></tr><tr class="skipped"><th class="rowhead"><span class="co">someone@gmail.com</span><span class="key">no company key</span></th><td class="c status"><span class="tag t-skip">skipped</span><span class="why">no business domain, company, or person name to enrich against</span></td><td class="c skip" colspan="10"><span class="dash">not enriched &middot; $0.00</span></td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <span class="item"><span class="tag t-det">provider &middot; 0.90</span> deterministic match</span>
+    <span class="item"><span class="tag t-ai">AI map &middot; 0.72</span> LLM reconciled, own confidence</span>
+    <span class="item"><span class="tag t-kept">not asked &middot; kept</span> already trusted, no lookup made</span>
+    <span class="item"><span class="tag t-miss">no match</span> provider had nothing</span>
+    <span class="item"><span class="tag t-lost">failed &rarr; Apollo</span> quality gate rejected it, waterfall moved on</span>
+    <span class="item"><span style="display:inline-block;width:10px;height:10px;box-shadow:inset 2px 0 0 var(--warn);background:rgba(91,141,239,.06);border:1px solid var(--border)"></span> flagged for review</span>
+  </div>
+
+  <p class="note"><b>What this layout argues that the row layout cannot.</b> Provider spend is a column
+  total, so the cost lever sits in the header where the decision is made. Two greyed column groups say
+  &ldquo;we did not fire everything&rdquo; more convincingly than any copy. Apollo appears only where the
+  waterfall actually fell through to it, marked <span class="role fallback">fallback</span>, which makes the
+  Gate B retry legible. And provenance is per cell, so &ldquo;show the receipt&rdquo; costs no extra screen.</p>
+</div>

@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: rpt_qbr_campaign_performance
+    description: >
+      QBR grain, published as parquet for the semantic layer. Cube reads this
+      file; it never opens the DuckDB warehouse.
+    columns:
+      - name: tenant_id
+        data_tests: [not_null]
+      - name: quarter_label
+        data_tests: [not_null]
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "redemptions <= redemption_attempts"
+      - expression_is_true:
+          arguments:
+            expression: "redemption_rate is null or (redemption_rate between 0 and 1)"
+
+  - name: rpt_feature_adoption
+    columns:
+      - name: adoption_state
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['never_used', 'lapsed', 'newly_adopted', 'growing', 'declining', 'steady']
+
+  - name: rpt_anomalies
+    description: >
+      Statistically unusual weekly movements. Deliberately stops short of
+      deciding what is worth discussing; that ranking lives in qbr/salience.py.
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "abs(z_score) >= 2.5"
+      # Partial weeks at the data boundary produce enormous artefact z-scores
+      # that bury real findings. This is the regression guard for that fix.
+      - expression_is_true:
+          arguments:
+            expression: "abs(z_score) < 500"
+
+  - name: rpt_qbr_overview
+    columns:
+      - name: tenant_id
+        data_tests: [not_null]
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "api_error_rate is null or (api_error_rate between 0 and 1)"

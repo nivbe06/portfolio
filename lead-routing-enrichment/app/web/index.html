@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lead Routing Enrichment</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600&family=Outfit:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#1948C7; --surface:#245FF7; --surface-2:#2E5EFF; --surface-3:#3D6BFF;
+    --border:#3A56D9; --border-hi:#5C7DFF;
+    --ink:#FFFFFF; --muted:#C7D6FF; --faint:#93A9E8;
+    --accent:#D4F547; --accent-ink:#00434C; --accent-dim:rgba(212,245,71,.14);
+    --ai:#8FCE7A; --ai-dim:rgba(143,206,122,.18);
+    --good:#CCF87D; --warn:#F0EBD8; --bad:#FF6B6B; --info:#5B8DEF;
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+    --r:16px; --r-sm:10px; --pill:999px;
+    --mono:ui-monospace,SFMono-Regular,"IBM Plex Mono",Menlo,monospace;
+    --sans:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --disp:"Syne","Outfit",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;border-left:1px solid var(--border);border-right:1px solid var(--border);min-height:100vh}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  header{padding:var(--s6) var(--s6) var(--s4);display:flex;justify-content:space-between;gap:var(--s4);align-items:flex-start}
+  .kick{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--accent);margin:0 0 var(--s2)}
+  h1{font-family:var(--disp);font-weight:600;letter-spacing:normal;font-size:34px;line-height:1.08;margin:0}
+  .sub{color:var(--muted);font-size:15px;margin:var(--s2) 0 0;max-width:58ch}
+
+  button{font-family:var(--sans);font-size:14px;font-weight:500;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:8px;padding:var(--s2) var(--s4);cursor:pointer;transition:border-color 120ms ease,color 120ms ease,background-color 120ms ease}
+  button:hover{border-color:var(--border-hi);color:var(--ink)}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  button:active{transform:translateY(1px)}
+  .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);border-radius:var(--pill);font-size:15px;font-weight:600;padding:10px 20px}
+  .primary:hover{filter:brightness(1.05);color:var(--accent-ink);border-color:var(--accent)}
+  .primary:active{filter:brightness(.95)}
+  .ghost{background:transparent;border-color:var(--border-hi);border-radius:var(--r-sm);color:var(--ink);font-weight:600}
+  .ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .danger:hover{border-color:var(--bad);color:var(--bad)}
+  .demo-hi{border-color:#F2994A;color:#F2994A}
+  .demo-hi:hover{border-color:#F2994A;color:#F2994A;background:rgba(242,153,74,.14)}
+  .sm{padding:var(--s2) var(--s3);font-size:13px}
+
+  /* menu */
+  .menu-wrap{position:relative;flex:none}
+  .menu-btn{display:inline-flex;align-items:center;gap:8px}
+  .menu{position:absolute;right:0;top:46px;background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--r-sm);min-width:252px;padding:8px;box-shadow:0 20px 50px rgba(0,0,0,.45);z-index:20}
+  .menu[hidden]{display:none}
+  .menu .lbl{padding:var(--s1) var(--s3) var(--s1);font-size:11px;color:var(--faint);font-family:var(--sans);text-transform:uppercase;letter-spacing:.1em}
+  .menu select{width:calc(100% - 16px);margin:var(--s1) var(--s2) var(--s1);font-family:var(--sans);font-size:14px;font-weight:600;background:var(--surface-2);color:var(--ink);border:1px solid var(--border-hi);border-radius:8px;padding:var(--s2) var(--s3)}
+  .menu button.item{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:transparent;border:none;border-radius:8px;padding:var(--s2) var(--s3);color:var(--ink);font-weight:500;font-size:14px}
+  .menu button.item:hover{background:var(--surface-2);color:var(--ink)}
+  .menu .tag{font-family:var(--sans);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--warn);align-self:center;font-weight:700}
+  .menu .all{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.06em;align-self:center;font-weight:700}
+  .menu hr{border:none;border-top:1px solid var(--border);margin:var(--s2) var(--s1)}
+
+  /* stepper */
+  .stepper{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:var(--s2) var(--s6) var(--s4)}
+  .step{display:flex;align-items:center;gap:9px;padding:var(--s2) var(--s3);border-radius:6px;border:1px solid transparent;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .step .n{font-family:var(--mono);font-size:11px;width:20px;height:20px;border-radius:var(--pill);display:grid;place-items:center;background:var(--surface-2);color:var(--faint)}
+  .step.done{color:var(--muted)}
+  .step.done .n{background:var(--surface-3);color:var(--accent)}
+  .step.active{color:var(--ink);border-color:var(--accent);background:var(--accent-dim)}
+  .step.active .n{background:var(--accent);color:var(--accent-ink)}
+  .arw{color:var(--faint)}
+
+  main{padding:var(--s2) var(--s6) var(--s6)}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:var(--s5)}
+  .ptitle{font-family:var(--sans);font-weight:600;font-size:20px;margin:0 0 var(--s1)}
+  .psub{color:var(--muted);font-size:15px;margin:0 0 var(--s4);max-width:62ch}
+  .actions{display:flex;gap:var(--s2);align-items:center;flex-wrap:wrap;margin-top:var(--s4)}
+  .spacer{flex:1}
+  .grpdiv{color:var(--faint);text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:.1em;margin:var(--s4) 0 var(--s2)}
+  .note{color:var(--faint);font-size:14px;margin:var(--s4) 0 var(--s2)}
+  .empty-review{padding:var(--s5);text-align:center;color:var(--muted);border:1px dashed var(--border-hi);border-radius:var(--r-sm);margin-bottom:var(--s4)}
+
+  .drop{border:1.5px dashed var(--border-hi);border-radius:var(--r-sm);transition:border-color 120ms ease,background-color 120ms ease}
+  .drop.drag{border-color:var(--accent);background:var(--accent-dim)}
+  .drop textarea{width:100%;min-height:120px;resize:vertical;background:var(--canvas);color:var(--ink);border:none;border-radius:var(--r-sm);padding:var(--s3);font-family:var(--mono);font-size:14px;line-height:1.55}
+  .drop textarea:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .drop textarea::placeholder{color:var(--muted)}
+  .imap{font-size:14px;color:var(--muted);margin-top:var(--s3)}
+  .imap .u{color:var(--warn)} .imap .d{color:var(--bad)} .imap b{color:var(--ink)}
+
+  .tscroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:680px}
+  th,td{text-align:left;padding:var(--s2) var(--s3);border-bottom:1px solid var(--border);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  th{font-family:var(--sans);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+  .colsel{display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+  .colsel input{accent-color:var(--accent);width:15px;height:15px}
+  .def{font-size:10px;color:var(--accent-ink);background:var(--accent);border-radius:var(--pill);padding:1px var(--s1);text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+  .exist{color:var(--muted);font-family:var(--mono)} .emptyc{color:var(--faint);font-family:var(--mono)}
+  .ov{font-size:10px;color:var(--accent-ink);background:var(--warn);border-radius:var(--pill);padding:1px var(--s1);text-transform:uppercase;font-weight:700;margin-left:var(--s1)}
+
+  .scope{display:flex;align-items:center;gap:var(--s4);background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--r-sm);padding:var(--s4);font-size:15px}
+  .scope b{color:var(--accent)}
+  .loading{display:flex;align-items:center;gap:var(--s3);padding:52px var(--s2);font-family:var(--mono);font-size:14px;color:var(--ink)}
+  .loading .spin{width:18px;height:18px;border:2px solid var(--surface-3);border-top-color:var(--accent);border-radius:var(--pill);animation:spin .7s linear infinite;flex:none}
+  .loading .caret{color:var(--accent);animation:blink 1s steps(1) infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes blink{50%{opacity:0}}
+  .err{border:1px solid var(--bad);border-radius:var(--r-sm);padding:var(--s4);color:var(--bad);font-size:15px}
+
+  .summary{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:var(--r);padding:var(--s4) var(--s5);background:var(--surface);margin-bottom:var(--s4)}
+  .facts{font-family:var(--sans);font-size:14px;color:var(--muted)}
+  .facts b{color:var(--ink);font-weight:700} .facts .lbl2{color:var(--faint);text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:.1em;margin-right:var(--s2)}
+  .review-link{color:var(--warn);cursor:pointer;text-decoration:underline;font-weight:600}
+  .review-link.on{background:var(--warn);color:var(--accent-ink);text-decoration:none;padding:var(--s1) var(--s2);border-radius:var(--pill)}
+  .ai-filter-link{color:var(--ai);cursor:pointer;text-decoration:underline;font-weight:600}
+  .ai-filter-link.on{background:var(--ai);color:var(--canvas);text-decoration:none;padding:var(--s1) var(--s2);border-radius:var(--pill)}
+  .fgroup{display:flex;flex-direction:column;gap:6px}
+  .legend{display:flex;gap:var(--s4);flex-wrap:wrap;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--muted);margin-bottom:var(--s3)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend .rvw{margin-left:0}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);isolation:isolate;overflow:hidden;margin-bottom:var(--s4)}
+  .chead{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s5);border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .cname{font-family:var(--sans);font-weight:600;font-size:17px;margin:0}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .ckey{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .pill{font-family:var(--sans);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:var(--s1) var(--s2);border-radius:var(--pill);border:1px solid var(--border-hi);color:var(--muted)}
+  .pill.resolved{border-color:var(--info);color:var(--info);text-transform:none} .pill.warn{border-color:var(--warn);color:var(--warn)} .pill.skip{border-color:var(--bad);color:var(--bad)}
+  .pill.written{border-color:var(--accent);color:var(--accent);margin-left:auto}
+  .selcell{width:34px;padding-right:0}
+  .selbox{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;margin:0;vertical-align:middle}
+  .selbox:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .acctsel{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .acctsel:hover{color:var(--ink)}
+  .acctsel input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;margin:0}
+  .selall{display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:var(--muted)}
+  .selall:hover{color:var(--ink)}
+  .selall input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;margin:0}
+  .selbar{position:sticky;bottom:var(--s4);z-index:20;display:flex;align-items:center;gap:var(--s3);
+    flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--accent);border-radius:var(--r-sm);
+    padding:var(--s3) var(--s4);margin-top:var(--s4)}
+  .selbar .n{font-size:14px;color:var(--ink)}
+  .selbar .spacer{flex:1}
+  .rev{display:flex;gap:var(--s2);margin-left:auto} .rev button{padding:var(--s2) var(--s3);font-size:13px}
+  .rev .go{border-color:var(--border-hi);color:var(--ink);font-weight:600}
+  .rev .go:hover{border-color:var(--good);color:var(--good)} .rev .no:hover{border-color:transparent;color:var(--bad)}
+  .fname{font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink)}
+  .fkey{font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400;margin-left:var(--s1)}
+  .was{color:var(--faint);font-family:var(--mono);font-size:13px} .now{font-family:var(--mono);font-size:13px;color:var(--ink)} .raw{color:var(--muted);font-family:var(--mono)}
+  .arrow{color:var(--faint);padding:0 4px}
+  .conf{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+  .conf.dual{gap:16px} .cmetric{display:inline-flex;align-items:center;gap:5px}
+  .clbl{font-family:var(--sans);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--faint)}
+  .conf .lownum{color:var(--warn)}
+  .ai-tag{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--ai);background:var(--ai-dim);border-radius:var(--pill);padding:1px 6px}
+  .cbar{width:36px;height:5px;border-radius:var(--pill);background:var(--surface-3);overflow:hidden} .cbar i{display:block;height:100%;background:var(--good)} .cbar i.low{background:var(--warn)}
+  .recon{font-family:var(--mono);font-size:13px;background:var(--surface-2);color:var(--accent);border:1px solid var(--border-hi);border-radius:var(--r-sm);padding:var(--s2);min-width:120px;max-width:200px;font-weight:500}
+  .recon:focus-visible{outline:2px solid var(--accent);outline-offset:1px;color:var(--ink)}
+  .mini{padding:var(--s1) var(--s3);font-size:12px;background:transparent;border-color:var(--border-hi)}
+  .mini.accept{border-color:var(--border-hi);color:var(--ink)}
+  .mini.accept:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+  .badge{font-family:var(--sans);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:var(--s1) var(--s2);border-radius:var(--pill);white-space:nowrap}
+  .b-det{border:1px solid var(--border-hi);color:var(--muted)} .b-llm{background:var(--ai-dim);border:1px solid var(--ai);color:var(--ai)} .b-kept{border:1px solid var(--info);color:var(--info)} .b-fail{border:1px solid var(--bad);color:var(--bad)}
+  .path{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .src-fail{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--bad)} .src-win{color:var(--ink)}
+  .rvw{font-family:var(--sans);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent-ink);background:var(--warn);border-radius:var(--pill);padding:1px var(--s1);margin-left:var(--s2)}
+  tr.frow{cursor:default} tr.frow.clickable{cursor:pointer} tr.frow.clickable:hover{background:var(--surface-2)}
+  tr.frow.review{box-shadow:inset 3px 0 0 var(--warn)}
+  .detail td{background:var(--surface-2);font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.7} .detail .k{color:var(--faint)} .detail b{color:var(--ink)}
+  .detail .mini.accept{margin-left:var(--s3);vertical-align:middle;font-family:var(--sans)}
+  .skiprow{padding:var(--s4) var(--s5);font-family:var(--sans);font-size:15px;color:var(--bad)}
+
+  /* overlay (menu panels) */
+  .ov-bg{position:fixed;inset:0;background:rgba(2,4,32,.72);display:flex;align-items:flex-start;justify-content:center;z-index:40;padding:48px var(--s4);overflow:auto}
+  .ov-bg[hidden]{display:none}
+  .ov-card{background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--r);max-width:720px;width:100%;padding:var(--s5)}
+  .ov-card h3{font-family:var(--sans);font-weight:600;font-size:20px;margin:0}
+  .ov-head{display:flex;justify-content:space-between;align-items:center;gap:var(--s4);margin:0 0 var(--s4)}
+  .kv{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:14px}
+  .termrow{padding:var(--s2) 0;border-bottom:1px solid var(--border);font-size:14px}
+  .termrow:last-child{border-bottom:none}
+  .termrow .field{font-family:var(--mono);font-size:11px;color:var(--faint);text-transform:uppercase}
+  .termrow .agreed{font-family:var(--sans);font-weight:600;color:var(--ink)}
+  .termrow .aliases{font-family:var(--mono);color:var(--muted)}
+  .termrow .action{font-family:var(--mono);font-size:11px;color:var(--accent)}
+
+  .toast{position:fixed;bottom:var(--s5);left:50%;transform:translateX(-50%) translateY(8px);background:var(--surface-2);border:1px solid var(--accent);color:var(--ink);font-family:var(--sans);font-size:14px;font-weight:500;padding:var(--s3) var(--s4);border-radius:var(--r-sm);opacity:0;transition:opacity 160ms ease,transform 160ms ease;pointer-events:none;z-index:60}
+  .toast{display:flex;align-items:center;gap:var(--s3)}
+  .toast .mini{padding:3px 10px;font-size:12px;border-color:var(--accent);color:var(--accent);background:transparent}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .modal-bg{position:fixed;inset:0;background:rgba(2,4,32,.72);display:flex;align-items:center;justify-content:center;z-index:70;padding:var(--s4)}
+  .modal-bg[hidden]{display:none}
+  .modal{background:var(--surface);border:1px solid var(--border-hi);border-radius:var(--r);max-width:460px;width:100%;padding:var(--s5)}
+  .modal h3{font-family:var(--sans);font-weight:600;font-size:20px;margin:0 0 var(--s3)}
+  .modal-body{font-size:15px;color:var(--muted);line-height:1.6} .modal-body p{margin:0 0 var(--s3)} .modal-body b{color:var(--ink)}
+  .modal-warn{background:var(--accent-dim);border-left:3px solid var(--warn);padding:var(--s3);border-radius:var(--r-sm);color:var(--ink)}
+  .modal-body select{font-family:var(--sans);font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--border-hi);border-radius:var(--r-sm);padding:8px 10px;width:100%;margin-top:var(--s2)}
+  .modal-actions{display:flex;gap:var(--s2);justify-content:flex-end;margin-top:var(--s4)}
+  /* step 2 field list */
+  .fsummary{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 16px;font-size:14px;color:var(--muted);margin-bottom:var(--s4)}
+  .fsummary b{color:var(--ink);font-weight:700}
+  .flist{display:flex;flex-direction:column;gap:2px}
+  .frow2{display:grid;grid-template-columns:24px 320px 1fr;gap:14px;align-items:center;padding:var(--s3);border-radius:var(--r-sm);cursor:pointer;min-height:48px}
+  .frow2:hover{background:var(--surface-2)} .frow2.sel{background:var(--accent-dim)}
+  .frow2 input{width:20px;height:20px;accent-color:var(--accent);justify-self:center}
+  .frow2 .fn{font-family:var(--sans);font-size:14px;color:var(--ink);font-weight:500}
+  .frow2 .cov{font-size:14px;color:var(--muted)} .frow2 .cov b{color:var(--ink)}
+  .hi-ov{color:var(--warn)} .hi-auto{color:var(--info)}
+  .frow-wrap{display:flex;flex-direction:column}
+  .ovtoggle{display:flex;align-items:center;gap:var(--s2);margin:0 0 var(--s1) 38px;padding:var(--s2);font-size:14px;color:var(--muted);cursor:pointer;border-radius:var(--r-sm);border-left:2px solid var(--warn)}
+  .ovtoggle:hover{background:var(--surface-2)}
+  .ovtoggle input{appearance:none;-webkit-appearance:none;width:15px;height:15px;border:1.5px solid var(--warn);border-radius:3px;background:transparent;position:relative;cursor:pointer;flex:none}
+  .ovtoggle input:checked{background:var(--warn)}
+  .ovtoggle input:checked::after{content:'';position:absolute;left:4px;top:0px;width:4px;height:8px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .ovtoggle input:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+  .ovtoggle b{color:var(--ink)}
+  .ovcost{color:var(--faint)}
+  .prev{margin-top:var(--s4);border:1px solid var(--border);border-radius:var(--r-sm)}
+  .prev summary{padding:12px 16px;cursor:pointer;font-size:14px;color:var(--muted);font-weight:600}
+  .prev summary:hover{color:var(--ink)}
+  .prev .tscroll{padding:0 var(--s4) var(--s4)}
+  .cap{caption-side:top;text-align:left;font-size:12px;color:var(--faint);padding:var(--s1) 0}
+  .skipnote{margin-top:var(--s3);font-size:15px;color:var(--muted);background:var(--surface-2);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:var(--s3) var(--s4)}
+  .skipnote b{color:var(--ink)}
+
+  /* admin panel */
+  .admin-shell{display:flex;gap:var(--s5);align-items:flex-start}
+  .admin-nav{width:200px;flex:none;display:flex;flex-direction:column;gap:2px}
+  .admin-nav button{display:block;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:var(--r-sm);padding:var(--s3) var(--s4);color:var(--muted);font-weight:600}
+  .admin-nav button:hover{background:var(--surface-2);color:var(--ink)}
+  .admin-nav button.active{background:var(--accent-dim);color:var(--ink);box-shadow:inset 3px 0 0 var(--accent)}
+  .admin-content{flex:1;min-width:0}
+  .filter-row{display:flex;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4)}
+  .filter-row input,.filter-row select{font-family:var(--sans);font-size:14px;background:var(--surface-2);color:var(--ink);border:1px solid var(--border-hi);border-radius:var(--r-sm);padding:var(--s2) var(--s3)}
+  .filter-row input:focus-visible,.filter-row select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .danger-block{border:1px solid var(--bad);border-radius:var(--r-sm);background:var(--surface-2);padding:var(--s4) var(--s5)}
+  .danger-block h3{font-family:var(--sans);font-weight:600;font-size:16px;margin:0 0 var(--s1)}
+  .stepper[hidden]{display:none}
+
+  /* responsive: stack the review table + header on narrow screens */
+  @media (max-width:760px){
+    .card thead{display:none}
+    .card table{min-width:0;display:block} .card tbody,.card tr,.card td{display:block;width:auto}
+    .card tr[hidden]{display:none}   /* the block rule above outranks [hidden], so restate it */
+    .card tr.frow{padding:var(--s3) var(--s4);border-bottom:1px solid var(--border)}
+    .card td{border:none;padding:4px 0;display:flex;gap:12px;align-items:baseline}
+    .card td::before{content:attr(data-label);flex:none;width:124px;color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;font-family:var(--sans)}
+    .card .detail td{display:block} .card .detail td::before{display:none}
+    .recon{max-width:none;flex:1}
+    .selcell{width:auto}
+    .selbar{gap:var(--s2)}
+    .selbar .spacer{display:none}
+    .selbar .n{flex:1;min-width:0}
+    .card td[data-label="accept"]{min-height:44px;align-items:center}
+    .card td.selcell.empty{display:none}
+    .selbox{width:22px;height:22px}
+    .frow2{grid-template-columns:24px 1fr;gap:8px 12px} .frow2 .cov{grid-column:2}
+    button{min-height:44px}
+    .admin-shell{flex-direction:column}
+    .admin-nav{width:100%;flex-direction:row;overflow-x:auto;gap:var(--s2)}
+    .admin-nav button{flex:none;min-height:44px}
+  }
+  @media (max-width:600px){
+    header{flex-direction:column} .menu-wrap{align-self:flex-end}
+  }
+  @media (prefers-reduced-motion:reduce){.loading .spin,.loading .caret{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="kick">Talon.One // Task 01</p>
+      <h1>Lead Routing Enrichment</h1>
+      <p class="sub">Bring a list, choose what to enrich, review every field, then write to your CRM. Deterministic-first, AI-last.</p>
+    </div>
+    <div class="menu-wrap">
+      <button class="ghost menu-btn" id="menu-btn" onclick="toggleMenu()" aria-haspopup="true">◱ Menu</button>
+      <div class="menu" id="menu" hidden>
+        <div class="lbl">Signed in (demo)</div>
+        <select id="user" onchange="switchUser()"></select>
+        <hr>
+        <button class="item" onclick="showTerms()">Canonical terms <span class="all">all</span></button>
+        <button class="item admin-only" onclick="openAdmin()">Admin panel <span class="tag">admin</span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="stepper" id="stepper"></div>
+  <main id="stage"></main>
+</div>
+
+<div class="ov-bg" id="overlay" hidden onclick="if(event.target===this)closeOverlay()"><div class="ov-card" id="ov-card" role="dialog" aria-modal="true" aria-label="panel"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-bg" id="modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h3 id="modal-title"></h3><div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions"><button class="ghost" onclick="closeModal(false)">Cancel</button><button class="primary" id="modal-ok" onclick="closeModal(true)">Confirm</button></div>
+  </div>
+</div>
+
+<script>
+// ---------- state ----------
+let STEP=1, ACCOUNTS=[], CATALOG=[], SELECTED=new Set(), OVERWRITE=new Set(), LAST=null, REVIEW_ONLY=false, AI_ONLY=false;
+// Review-queue selection. Keyed accIdx:field, never on the positional row id:
+// card() filters the field list when REVIEW_ONLY is on, so the same id means
+// different fields depending on filter state.
+const REVIEW_SEL=new Set(); let LAST_ACCEPTED=[];
+let CURRENT_USER='ana', USERS=[];
+let ADMIN=false, ADMIN_TAB='activity', ENRICH_FILTERS={company:'',field:''};
+const ADMIN_TABS=[{id:'activity',label:'Activity log'},{id:'costs',label:'Cost dashboard'},{id:'enrichment',label:'Enrichment log'},{id:'danger',label:'Danger zone'}];
+const STEPS=['Source','Select fields','Enrich','Review & write'];
+const FIELD_ORDER=["industry","employee_count","annual_revenue_band","country","ecommerce_platform","funding_stage","total_raised_usd","company_email","contact_email","contact_phone","seniority_function","linkedin_url"];
+const FIELD_LABELS={industry:"Industry",employee_count:"Employee count",annual_revenue_band:"Annual revenue band",country:"Country",ecommerce_platform:"Ecommerce platform",funding_stage:"Funding stage",total_raised_usd:"Total raised (USD)",company_email:"Company email",contact_email:"Contact email",contact_phone:"Contact phone",seniority_function:"Seniority function",linkedin_url:"LinkedIn URL"};
+const flabel=f=>FIELD_LABELS[f]||f.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+const FREE_DOMAINS=['gmail.com','yahoo.com','outlook.com','hotmail.com','gmx.de','web.de'];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const $=id=>document.getElementById(id);
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function show(v){if(v===null||v===undefined||v==='')return '<span aria-label="empty">∅</span>';if(Array.isArray(v))return v.join(', ');return esc(v);}
+function isFreeEmail(v){return typeof v==='string'&&v.includes('@')&&FREE_DOMAINS.includes(v.split('@')[1].toLowerCase());}
+
+// ---------- init ----------
+async function init(){
+  USERS=(await (await fetch('/api/users')).json()).users;
+  const sel=$('user'); sel.innerHTML=USERS.map(u=>`<option value="${u.id}">${esc(u.name)} · ${esc(u.role)}</option>`).join(''); sel.value=CURRENT_USER;
+  CATALOG=(await (await fetch('/api/fields')).json()).fields;
+  SELECTED=new Set(CATALOG.filter(f=>f.default).map(f=>f.field));
+  switchUser(); renderStepper(); renderStep();
+}
+function currentUser(){return USERS.find(u=>u.id===CURRENT_USER)||{};}
+function switchUser(){CURRENT_USER=$('user').value;const admin=currentUser().admin;
+  document.querySelectorAll('.admin-only').forEach(e=>e.style.display=admin?'flex':'none');
+  if(ADMIN&&!admin)closeAdmin();}
+function toggleMenu(){const m=$('menu');m.hidden=!m.hidden;}
+document.addEventListener('click',e=>{if(!e.target.closest('.menu-wrap'))$('menu').hidden=true;});
+
+function renderStepper(){
+  $('stepper').innerHTML=STEPS.map((s,i)=>{const n=i+1;const cls=n===STEP?'active':(n<STEP?'done':'');
+    return `<div class="step ${cls}"><span class="n">${n<STEP?'✓':n}</span>${esc(s)}</div>`+(n<STEPS.length?'<span class="arw">→</span>':'');}).join('');
+}
+function goStep(n){STEP=n;renderStepper();renderStep();window.scrollTo(0,0);}
+
+// ---------- steps ----------
+function renderStep(){
+  if(STEP===1)stepSource(); else if(STEP===2)stepFields(); else if(STEP===3)stepEnrich(); else if(STEP===4)stepReview();
+}
+
+function stepSource(){
+  $('stage').innerHTML=`<div class="panel">
+    <h2 class="ptitle">Add a list</h2>
+    <p class="psub">Connect your CRM to enrich leads directly. No live CRM to connect? Upload a CSV instead.</p>
+    <div class="actions">
+      <button class="primary" onclick="connectSF()">Connect Salesforce</button>
+    </div>
+    <div class="grpdiv">or bring your own list</div>
+    <div class="drop" id="drop"><textarea id="csv" placeholder="Paste CSV (with header row) or drop a .csv file here.
+Recognised columns: email, company, domain/website, first/last name, title, phone, country, linkedin.
+Salesforce, HubSpot, Apollo & LinkedIn Sales Navigator exports map automatically."></textarea></div>
+    <div class="imap" id="imap"></div>
+    <div class="actions">
+      <button class="ghost" id="use-list-btn" onclick="ingest()">Use this list</button>
+      <input type="file" id="file" accept=".csv,text/csv" hidden onchange="filePick(this)">
+      <button onclick="$('file').click()">Choose file…</button>
+    </div>
+    <p class="note">No CRM or data on hand? Load the demo list, enrich it, and write it to your CRM. Then load the second one: new companies carrying the same messy values, so the AI reconciliations drop as the mappings you confirmed become deterministic rules.</p>
+    <div class="actions">
+      <button class="demo-hi" onclick="loadDemo('A')">Demo list</button>
+      <button onclick="loadDemo('B')">Second run: new companies, same variants</button>
+    </div></div>`;
+  const d=$('drop');
+  ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add('drag');}));
+  ['dragleave','drop'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.remove('drag');}));
+  d.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)f.text().then(t=>{$('csv').value=t;toast('Loaded '+f.name);});});
+  $('csv').addEventListener('input',resetIngestBtn);
+}
+function resetIngestBtn(){
+  const btn=$('use-list-btn'); if(!btn||btn.dataset.ready!=='1')return;
+  btn.textContent='Use this list'; btn.classList.remove('primary'); btn.classList.add('ghost'); delete btn.dataset.ready;
+}
+function filePick(inp){const f=inp.files[0];if(f)f.text().then(t=>{$('csv').value=t;toast('Loaded '+f.name);});}
+function connectSF(){toast('Salesforce connector — mocked in this demo');}
+async function loadDemo(b){
+  const d=await (await fetch('/api/demo/'+b)).json();
+  $('csv').value=d.csv;
+  // setting .value does not fire the textarea's input listener, so clear the
+  // ingest button's ready flag by hand or ingest() would skip ahead with the
+  // previous list still in ACCOUNTS
+  resetIngestBtn();
+  await ingest();
+  toast('Demo list pasted · '+ACCOUNTS.length+' accounts parsed');
+}
+function ingestPreviewTable(accounts){
+  const rows=accounts.map(a=>`<tr><td data-label="company">${esc(a.company_name||'—')}</td>`
+    +`<td data-label="domain">${esc(a.domain||'—')}</td>`
+    +`<td data-label="contact">${esc(a.contact_name||'—')}</td>`
+    +`<td data-label="email">${esc(a.email||'—')}</td></tr>`).join('');
+  return `<div class="tscroll"><table><caption class="cap">Parsed rows, ready to enrich</caption>`
+    +`<thead><tr><th scope="col">company</th><th scope="col">domain</th><th scope="col">contact</th><th scope="col">email</th></tr></thead>`
+    +`<tbody>${rows}</tbody></table></div>`;
+}
+async function ingest(){
+  const btn=$('use-list-btn');
+  if(btn.dataset.ready==='1'){goStep(2);return;}
+  const text=$('csv').value.trim(); if(!text){$('imap').innerHTML='<span class="d">paste or drop a CSV first</span>';return;}
+  const d=await (await fetch('/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({csv_text:text})})).json();
+  const mapped=Object.entries(d.mapping).map(([h,f])=>esc(h)+'→'+esc(f)).join(', ');
+  const summary=`<b>${d.count}</b> rows mapped`+(d.dropped?` · <span class="d">${d.dropped} dropped (no identifier)</span>`:'')+(d.unmapped.length?` · <span class="u">unmapped: ${d.unmapped.map(esc).join(', ')}</span>`:'')+(mapped?`<br>${mapped}`:'');
+  $('imap').innerHTML=summary+(d.count?ingestPreviewTable(d.accounts):'');
+  if(!d.count)return;
+  ACCOUNTS=d.accounts;
+  btn.textContent='Continue → Select fields'; btn.classList.remove('ghost'); btn.classList.add('primary'); btn.dataset.ready='1';
+}
+
+function cellVal(a,f){const v=(a.existing||{})[f];return (v!==null&&v!==undefined&&v!=='')?v:null;}
+function fieldCoverage(field){
+  let present=0,overwrite=0,personal=0,examples=[];
+  ACCOUNTS.forEach(a=>{const v=cellVal(a,field);if(v===null)return;present++;
+    if(field==='contact_email'&&isFreeEmail(v)){personal++;}
+    else{overwrite++;if(examples.length<2)examples.push(a.company_name||a.domain||'?');}});
+  return {present,overwrite,personal,missing:ACCOUNTS.length-present,examples};
+}
+function coverageLine(field){
+  const c=fieldCoverage(field),sel=SELECTED.has(field),N=ACCOUNTS.length,parts=[];
+  if(c.missing)parts.push(`<b>${c.missing}</b> of ${N} missing${sel?' → will fill':''}`);
+  if(c.personal)parts.push(`<span class="hi-auto">${c.personal} personal${sel?' → harvest work email':''}</span>`);
+  if(c.overwrite)parts.push(`<span class="hi-ov">${c.overwrite} already set</span>`);
+  return parts.join(' · ')||`${N} accounts`;
+}
+function overwriteControl(field){
+  const c=fieldCoverage(field);
+  if(!c.overwrite)return '';
+  const on=OVERWRITE.has(field);
+  return `<label class="ovtoggle" onclick="event.stopPropagation()">
+    <input type="checkbox" ${on?'checked':''} onchange="toggleOverwrite('${field}')" aria-label="also overwrite ${c.overwrite} existing ${esc(flabel(field))} value${c.overwrite>1?'s':''}">
+    also overwrite <b>${c.overwrite}</b> existing${c.examples.length?' — '+c.examples.map(esc).join(', '):''} <span class="ovcost">(spends a provider call)</span>
+  </label>`;
+}
+function previewTable(accs){
+  const fields=CATALOG.map(c=>c.field).filter(f=>accs.some(a=>cellVal(a,f)!==null));
+  const head=fields.map(f=>`<th scope="col">${esc(flabel(f))}</th>`).join('');
+  const rows=accs.map(a=>`<tr><th scope="row" class="mono">${esc(a.company_name||a.domain||a.email||'?')}</th>${fields.map(f=>{const v=cellVal(a,f);return `<td>${v!==null?esc(Array.isArray(v)?v.join(', '):v):'<span class="emptyc" aria-label="empty">∅</span>'}</td>`}).join('')}</tr>`).join('');
+  return `<div class="tscroll"><table><caption class="cap">Accounts that already carry some data</caption><thead><tr><th scope="col">account</th>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function stepFields(){
+  const cols=CATALOG.slice().sort((a,b)=>FIELD_ORDER.indexOf(a.field)-FIELD_ORDER.indexOf(b.field));
+  const items=cols.map(c=>{const sel=SELECTED.has(c.field);
+    return `<div class="frow-wrap"><label class="frow2 ${sel?'sel':''}"><input type="checkbox" ${sel?'checked':''} onchange="toggleField('${c.field}')" aria-label="enrich ${esc(flabel(c.field))}">
+      <span class="fn">${esc(flabel(c.field))} <span class="fkey">${esc(c.field)}</span>${c.default?' <span class="def">default</span>':''}</span>
+      <span class="cov">${coverageLine(c.field)}</span></label>
+      ${sel?overwriteControl(c.field):''}</div>`;}).join('');
+  let fill=0,ov=0;[...SELECTED].forEach(f=>{const c=fieldCoverage(f);fill+=c.missing+c.personal;if(OVERWRITE.has(f))ov+=c.overwrite;});
+  const summary=`Enriching <b>${SELECTED.size}</b> field${SELECTED.size===1?'':'s'} across <b>${ACCOUNTS.length}</b> account${ACCOUNTS.length===1?'':'s'}: about <b>${fill}</b> value${fill===1?'':'s'} to fill${ov?`, <b>${ov}</b> existing to overwrite`:''}.`;
+  const withData=ACCOUNTS.filter(a=>CATALOG.some(c=>cellVal(a,c.field)!==null));
+  const preview=withData.length?`<details class="prev"><summary>Preview ${withData.length} account${withData.length===1?'':'s'} with existing values</summary>${previewTable(withData)}</details>`:'';
+  $('stage').innerHTML=`<div class="panel">
+    <h2 class="ptitle">Choose what to enrich</h2>
+    <p class="psub">One toggle per field, filling gaps across the whole list. Existing values are left alone unless you opt a field into overwrite. Defaults and personal emails are pre-selected.</p>
+    <div class="fsummary">${summary}</div>
+    <div class="flist">${items}</div>
+    ${preview}
+    <div class="actions"><button class="ghost" onclick="goStep(1)">← Back</button><span class="spacer"></span>
+      <button class="primary" onclick="goStep(3)" ${SELECTED.size?'':'disabled'}>Continue → Enrich</button></div>
+  </div>`;
+}
+function toggleField(f){SELECTED.has(f)?(SELECTED.delete(f),OVERWRITE.delete(f)):SELECTED.add(f);stepFields();}
+function toggleOverwrite(f){OVERWRITE.has(f)?OVERWRITE.delete(f):OVERWRITE.add(f);stepFields();}
+
+async function stepEnrich(){
+  const p=await (await fetch('/api/plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accounts:ACCOUNTS,fields:[...SELECTED],overwrite_fields:[...OVERWRITE]})})).json();
+  $('stage').innerHTML=`<div class="panel">
+    <h2 class="ptitle">Run the enrichment</h2>
+    <p class="psub">Here's the scope before we spend a single provider call. Cost in money is tracked in the admin dashboard, not here.</p>
+    <div class="scope"><span>◱</span><div>This will run <b>${p.lookups}</b> provider lookup${p.lookups===1?'':'s'} across <b>${p.accounts}</b> account${p.accounts===1?'':'s'} for <b>${SELECTED.size}</b> field${SELECTED.size===1?'':'s'}.</div></div>
+    ${p.skipped?`<div class="skipnote"><b>${p.skipped} account${p.skipped===1?'':'s'} skipped</b> — ${p.skipped_accounts.map(s=>esc(s.name)+' ('+esc(s.reason)+')').join('; ')}</div>`:''}
+    <div class="actions"><button class="ghost" onclick="goStep(2)">← Back</button><span class="spacer"></span><button class="primary" onclick="enrichRun()">Enrich ${p.accounts} account${p.accounts===1?'':'s'}</button></div>
+  </div>`;
+}
+const LOAD_MSGS=['Connecting to enrichment services','Fetching firmographics & contacts','Running quality gates','Reconciling to canonical terms'];
+function startTyping(){
+  $('stage').innerHTML='<div class="panel"><div class="loading"><span class="spin"></span><span id="ltext"></span><span class="caret">▋</span></div></div>';
+  const el=$('ltext');let mi=0,ci=0,del=false,live=true;
+  (function t(){if(!live)return;const m=LOAD_MSGS[mi];
+    if(!del){el.textContent=m.slice(0,ci++);if(ci>m.length){del=true;setTimeout(t,650);return;}}
+    else{el.textContent=m.slice(0,ci--);if(ci===0){del=false;mi=(mi+1)%LOAD_MSGS.length;}}
+    setTimeout(t,del?18:34);})();
+  return ()=>{live=false;};
+}
+async function enrichRun(){
+  const stop=startTyping();
+  try{
+    const [res]=await Promise.all([
+      fetch('/api/enrich',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accounts:ACCOUNTS,fields:[...SELECTED],overwrite_fields:[...OVERWRITE],user:CURRENT_USER})}),
+      sleep(2000)]);
+    stop(); if(!res.ok)throw new Error('HTTP '+res.status);
+    LAST=await res.json(); goStep(4);
+  }catch(e){stop();$('stage').innerHTML='<div class="panel"><div class="err">Enrichment failed: '+esc(e.message)+'</div></div>';}
+}
+
+function aiTotal(){let n=0;LAST.results.forEach(r=>{if(!r.skipped)r.fields.forEach(f=>{if(f.method==='llm')n++;});});return n;}
+function stepReview(){
+  pruneSel();
+  const s=LAST.summary;
+  const showToggle=REVIEW_ONLY||s.low_conf_total>0;
+  const toggleLabel=REVIEW_ONLY?(s.low_conf_total>0?`✓ ${s.low_conf_total} field${s.low_conf_total>1?'s':''} to review`:'✓ Showing: needs review only'):`${s.low_conf_total} field${s.low_conf_total>1?'s':''} to review`;
+  const review=showToggle?`<span id="review-suffix"> · <span class="review-link${REVIEW_ONLY?' on':''}" onclick="toggleReviewFilter()">${toggleLabel}</span></span>`:'';
+  const aiN=aiTotal();
+  const showAiToggle=AI_ONLY||aiN>0;
+  const aiLabel=AI_ONLY?(aiN>0?`✓ ${aiN} AI-reconciled`:'✓ Showing: AI-reconciled only'):`${aiN} AI-reconciled`;
+  const aiFilter=showAiToggle?`<span id="ai-filter-suffix"> · <span class="ai-filter-link${AI_ONLY?' on':''}" onclick="toggleAIFilter()">${aiLabel}</span></span>`:'';
+  const legend=`<details class="prev"><summary>What do these mean?</summary><div class="legend">
+    <span><span class="badge b-det">deterministic</span> free, rule-based</span>
+    <span><span class="badge b-llm">AI-reconciled</span> LLM proposal (editable)</span>
+    <span><span class="badge b-kept">kept</span> first-party</span>
+    <span><span class="ai-tag">AI</span> = the model's mapping confidence, shown next to the provider match</span>
+    <span>row → click for provenance</span>
+    <span><span class="rvw">review</span> confidence under 75% — click the row to see why, then accept or fix the reconciled value</span></div></details>`;
+  const selAllBox=s.low_conf_total>0?` · <label class="selall"><input type="checkbox" id="sel-all" onchange="selAll(this.checked)"> select all ${s.low_conf_total}</label>`:'';
+  const summary=`<div class="summary"><div class="fgroup">
+      <div class="facts"><span class="lbl2">Results</span><b>${s.enriched}</b> enriched · ${s.skipped} skipped${review}${selAllBox}</div>
+      <div class="facts"><span class="lbl2">Scope</span>${s.provider_calls} provider lookups · ${s.llm_calls} AI reconciliation${s.llm_calls===1?'':'s'}${aiFilter}</div>
+    </div><button class="primary" onclick="writeAll()">Write ${s.enriched} to CRM</button></div>`;
+  const cards=LAST.results.map((r,i)=>card(r,i)).join('');
+  const empty=REVIEW_ONLY&&s.low_conf_total===0?`<div class="empty-review">Nothing left to review — every field is either high-confidence or already accepted.</div>`
+    :(AI_ONLY&&aiN===0?`<div class="empty-review">No AI-reconciled fields — everything resolved deterministically or was kept as-is.</div>`:'');
+  // Only rendered when something is selected, so the default view gains no chrome.
+  const selbar=REVIEW_SEL.size?`<div class="selbar"><span class="mono n">${REVIEW_SEL.size} selected</span><span class="spacer"></span><button onclick="selAll(false)">Clear</button><button class="ghost" onclick="acceptSelected()">Accept ${REVIEW_SEL.size}</button></div>`:'';
+  $('stage').innerHTML=`<div class="actions" style="margin:0 0 var(--s4)"><button class="ghost" onclick="goStep(2)">← Change fields</button><button onclick="goStep(1)">New list</button></div>`
+    +'<h2 class="sr-only">Review & write</h2>'+summary+legend+empty+cards+selbar;
+  syncSelUI();
+}
+function toggleReviewFilter(){REVIEW_ONLY=!REVIEW_ONLY;stepReview();}
+function toggleAIFilter(){AI_ONLY=!AI_ONLY;stepReview();}
+function scrollReview(){const el=document.querySelector('tr.frow.review');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
+function reviewFirst(){closeModal(false);setTimeout(scrollReview,50);}
+
+// ---------- result rendering (shared) ----------
+function badge(f){if(f.kept)return '<span class="badge b-kept">kept</span>';if(f.verdict==='hard_fail')return '<span class="badge b-fail">hard fail</span>';if(f.method==='llm')return '<span class="badge b-llm">AI-reconciled</span>';if(f.value===null)return '<span class="badge b-fail">no data</span>';if(f.method==='unchanged')return '<span class="badge b-kept">kept existing</span>';return '<span class="badge b-det">deterministic</span>';}
+function confCell(f){
+  if(f.kept)return '<span class="conf">1.00</span>';
+  if(f.value===null)return '<span class="conf">–</span>';
+  const bar=v=>`<span class="cbar"><i class="${v<0.75?'low':''}" style="width:${Math.round(v*100)}%"></i></span>`;
+  const num=v=>`<span class="${v<0.75?'lownum':''}">${v.toFixed(2)}</span>`;
+  if(f.llm_confidence!=null){   // two distinct metrics, NOT a before/after progression
+    const al=`source match ${f.confidence.toFixed(2)}, AI mapping confidence ${f.llm_confidence.toFixed(2)}`;
+    return `<span class="conf dual" aria-label="${al}">`
+      +`<span class="cmetric"><span class="clbl">source</span>${bar(f.confidence)}${num(f.confidence)}</span>`
+      +`<span class="cmetric"><span class="ai-tag">AI</span>${bar(f.llm_confidence)}${num(f.llm_confidence)}</span></span>`;
+  }
+  return `<span class="conf" aria-label="source match ${f.confidence.toFixed(2)}">${bar(f.confidence)}${num(f.confidence)}</span>`;
+}
+function pathCell(f){if(f.kept||!f.providers_called.length)return 'first-party';return f.providers_called.map(p=>p===f.source?`<span class="src-win">${esc(p)}</span>`:`<span class="src-fail">${esc(p)}</span>`).join(' <span class="arrow">→</span> ');}
+function reconCell(f){if(f.kept)return `<span class="now">${show(f.value)}</span>`;const v=Array.isArray(f.value)?f.value.join(', '):(f.value==null?'':f.value);return `<input class="recon" data-field="${esc(f.field)}" data-raw="${esc(f.raw==null?'':(Array.isArray(f.raw)?f.raw.join(', '):f.raw))}" value="${esc(v)}" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()" onchange="reconChanged(this)" aria-label="reconciled value for ${esc(f.field)}">`;}
+function mapNote(f){return (f.notes||[]).find(n=>n.includes('->'))||'';}
+function hasDetail(f){return !f.kept&&(f.observed_at||mapNote(f)||f.method==='llm');}
+function rowHTML(f,id,key){
+  const dropped=f.value===null&&!f.kept;
+  const fromC=f.kept?'<span class="raw">—</span>':(dropped?'<span class="was">∅</span>':`<span class="now">${show(f.raw)}</span>`);
+  const reconC=dropped?`<button class="mini" onclick="event.stopPropagation();refetch('${id}','${esc(f.field)}','${esc(key)}')">Search other sources</button>`:reconCell(f);
+  const cl=hasDetail(f)?`clickable" tabindex="0" role="button" aria-expanded="false" onclick="toggle('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('${id}')}`:'';
+  const accIdx=Number(id.split('-')[0]);
+  const box=f.low_conf?`<input type="checkbox" class="selbox" ${REVIEW_SEL.has(selKey(accIdx,f.field))?'checked':''} onclick="event.stopPropagation()" onchange="selTog(${accIdx},'${esc(f.field)}')" aria-label="select ${esc(flabel(f.field))} for accept">`:'';
+  // .empty is what the mobile rule hides: a labelled 44px row holding nothing is waste
+  const selTd=((LAST.results[accIdx]||{}).low_conf_count>0)
+    ? `<td class="selcell${f.low_conf?'':' empty'}" data-label="accept">${box}</td>` : '';
+  return `<tr class="frow ${f.low_conf?'review ':''}${cl}" id="f-${id}" data-fld="${esc(f.field)}">
+    ${selTd}
+    <td class="fname" data-label="field">${esc(flabel(f.field))} <span class="fkey">${esc(f.field)}</span>${f.low_conf?'<span class="rvw" title="Confidence under 75%. Click the row to see why, then accept or fix the reconciled value.">review</span>':''}</td>
+    <td class="was" data-label="existing">${show(f.before)}</td><td data-label="from enrichment">${fromC}</td><td data-label="confidence">${confCell(f)}</td><td data-label="reconciled">${reconC}</td><td data-label="method">${badge(f)}</td><td class="path" data-label="source">${pathCell(f)}</td></tr>`;
+}
+function detailRow(f,id){
+  if(!hasDetail(f))return '';
+  const parts=[];
+  if(f.observed_at)parts.push(`<span class="k">observed</span> <b>${esc(f.observed_at)}</b>`);
+  if(f.method==='llm'&&f.llm_confidence!=null){
+    parts.push(`<span class="k">mapping</span> <b>${show(f.raw)} → ${show(f.value)}</b>`);
+    parts.push(`<span class="k">provider match</span> <b>${f.confidence.toFixed(2)}</b>`);
+    parts.push(`<span class="k">AI mapping confidence</span> <b>${f.llm_confidence.toFixed(2)}</b>`);
+  }else{
+    const n=mapNote(f); if(n)parts.push(`<span class="k">how it mapped</span> ${esc(n)}`);
+  }
+  const line=parts.join(' · ');
+  const accept=f.low_conf?`<button class="mini accept" onclick="event.stopPropagation();resolveReview('${id}')">✓ Accept this value</button>`:'';
+  const accIdx=Number(id.split('-')[0]);
+  const span=((LAST.results[accIdx]||{}).low_conf_count>0)?8:7;
+  return `<tr class="detail" id="d-${id}" hidden><td colspan="${span}"><span class="dline">${line}</span>${accept}</td></tr>`;
+}
+function reconChanged(el){
+  const tr=el.closest('tr.frow'); if(!tr)return;
+  const id=tr.id.replace('f-','');
+  const accIdx=Number(id.split('-')[0]);
+  const f=LAST.results[accIdx].fields.find(x=>x.field===tr.dataset.fld);
+  if(f)f.value=el.value.trim();   // persist before any re-render can revert it
+  if(tr.classList.contains('review'))resolveReview(id);
+}
+const selKey=(i,f)=>i+':'+f;
+function flaggedOf(idx){const r=LAST.results[idx];return r.skipped?[]:r.fields.filter(f=>f.low_conf).map(f=>f.field);}
+function allFlagged(){const o=[];LAST.results.forEach((r,i)=>{if(!r.skipped)r.fields.forEach(f=>{if(f.low_conf)o.push([i,f.field]);});});return o;}
+function pruneSel(){const live=new Set(allFlagged().map(([i,f])=>selKey(i,f)));[...REVIEW_SEL].forEach(k=>{if(!live.has(k))REVIEW_SEL.delete(k);});}
+function selTog(i,f){const k=selKey(i,f);REVIEW_SEL.has(k)?REVIEW_SEL.delete(k):REVIEW_SEL.add(k);stepReview();}
+function selAccount(i,on){flaggedOf(i).forEach(f=>{const k=selKey(i,f);on?REVIEW_SEL.add(k):REVIEW_SEL.delete(k);});stepReview();}
+function selAll(on){on?allFlagged().forEach(([i,f])=>REVIEW_SEL.add(selKey(i,f))):REVIEW_SEL.clear();stepReview();}
+function syncSelUI(){
+  const total=allFlagged().length,g=$('sel-all');
+  if(g){g.checked=total>0&&REVIEW_SEL.size===total;g.indeterminate=REVIEW_SEL.size>0&&REVIEW_SEL.size<total;}
+  document.querySelectorAll('.acctsel input').forEach(cb=>{
+    const i=Number(cb.dataset.acc),keys=flaggedOf(i).map(f=>selKey(i,f));
+    const n=keys.filter(k=>REVIEW_SEL.has(k)).length;
+    cb.checked=keys.length>0&&n===keys.length;cb.indeterminate=n>0&&n<keys.length;});
+}
+// State only, no DOM. Bulk accept calls this in a loop and re-renders once.
+function clearFlag(accIdx,field){
+  const r=LAST.results[accIdx];if(!r)return false;
+  const f=r.fields.find(x=>x.field===field);
+  if(!f||!f.low_conf)return false;
+  f.low_conf=false;
+  r.low_conf_count=Math.max(0,(r.low_conf_count||0)-1);
+  LAST.summary.low_conf_total=Math.max(0,(LAST.summary.low_conf_total||0)-1);
+  REVIEW_SEL.delete(selKey(accIdx,field));
+  return true;
+}
+function acceptSelected(){
+  const done=[...REVIEW_SEL].map(k=>{const i=k.indexOf(':');return {accIdx:Number(k.slice(0,i)),field:k.slice(i+1)};})
+    .filter(it=>clearFlag(it.accIdx,it.field));
+  if(!done.length)return;
+  LAST_ACCEPTED=done;REVIEW_SEL.clear();stepReview();
+  toast(`${done.length} field${done.length>1?'s':''} marked reviewed <button class="mini" onclick="undoAccept()">Undo</button>`,7000);
+}
+function undoAccept(){
+  if(!LAST_ACCEPTED.length)return;
+  LAST_ACCEPTED.forEach(({accIdx,field})=>{
+    const r=LAST.results[accIdx];const f=r&&r.fields.find(x=>x.field===field);
+    if(!f||f.low_conf)return;
+    f.low_conf=true;r.low_conf_count=(r.low_conf_count||0)+1;
+    LAST.summary.low_conf_total=(LAST.summary.low_conf_total||0)+1;});
+  const n=LAST_ACCEPTED.length;LAST_ACCEPTED=[];stepReview();
+  toast(`Restored ${n} flag${n>1?'s':''}`);
+}
+function refreshSelBar(){
+  const bar=document.querySelector('.selbar');
+  if(!REVIEW_SEL.size){if(bar)bar.remove();}
+  else if(bar){
+    bar.querySelector('.n').textContent=`${REVIEW_SEL.size} selected`;
+    bar.querySelector('.ghost').textContent=`Accept ${REVIEW_SEL.size}`;
+  }
+  const lbl=document.querySelector('.selall');
+  const total=allFlagged().length;
+  if(lbl){if(total<=0)lbl.remove();else lbl.lastChild.textContent=` select all ${total}`;}
+  syncSelUI();
+}
+function resolveReview(id){
+  const tr=$('f-'+id); if(!tr||!tr.classList.contains('review'))return;
+  const accIdx=Number(id.split('-')[0]);
+  const r=LAST.results[accIdx];
+  const f=r.fields.find(x=>x.field===tr.dataset.fld);
+  if(!f||!clearFlag(accIdx,f.field))return;
+  LAST_ACCEPTED=[{accIdx,field:f.field}];
+  toast('Marked reviewed — '+flabel(f.field)+' accepted <button class="mini" onclick="undoAccept()">Undo</button>',7000);
+  if(REVIEW_ONLY){stepReview();return;}   // filtered view: let the row/card drop out naturally
+  tr.classList.remove('review');
+  tr.querySelector('.rvw')?.remove();
+  const d=$('d-'+id); if(d)d.outerHTML=detailRow(f,id);
+  const cardWarn=document.querySelector(`#card-${accIdx} .pill.warn`);
+  if(cardWarn){if(r.low_conf_count<=0)cardWarn.remove();else cardWarn.textContent=`${r.low_conf_count} to review`;}
+  const sc=tr.querySelector('td.selcell');
+  if(sc){sc.querySelector('.selbox')?.remove();sc.classList.add('empty');}
+  if(r.low_conf_count<=0)document.querySelector(`#card-${accIdx} .acctsel`)?.remove();
+  refreshSelBar();
+  const suffix=$('review-suffix');
+  if(suffix){if(LAST.summary.low_conf_total<=0)suffix.remove();else suffix.querySelector('.review-link').textContent=`${LAST.summary.low_conf_total} field${LAST.summary.low_conf_total>1?'s':''} to review`;}
+}
+function toggle(id){const e=$('d-'+id);if(e){e.hidden=!e.hidden;const t=$('f-'+id);if(t)t.setAttribute('aria-expanded',String(!e.hidden));}}
+function card(r,idx){
+  if(REVIEW_ONLY&&(r.skipped||r.low_conf_count<=0))return '';
+  if(AI_ONLY&&(r.skipped||r.llm_calls<=0))return '';
+  if(r.skipped)return `<div class="card"><div class="chead"><h3 class="cname">${esc(r.company)}</h3><span class="ckey">${esc(r.label)}</span><span class="pill skip">skipped · Gate A</span></div><div class="skiprow">${esc(r.skip_reason)}</div></div>`;
+  let fields=REVIEW_ONLY?r.fields.filter(f=>f.low_conf):r.fields;
+  if(AI_ONLY)fields=fields.filter(f=>f.method==='llm');
+  const rows=fields.slice().sort((a,b)=>FIELD_ORDER.indexOf(a.field)-FIELD_ORDER.indexOf(b.field)).map((f,i)=>{const id=idx+'-'+i;return rowHTML(f,id,r.key)+detailRow(f,id);}).join('');
+  const resolved=r.key_source!=='input_domain'?`<span class="pill resolved">key resolved · <span class="mono">${esc(r.key)}</span></span>`:'';
+  const warn=r.low_conf_count>0?`<span class="pill warn">${r.low_conf_count} to review</span>`:'';
+  const acctSel=r.low_conf_count>0?`<label class="acctsel"><input type="checkbox" data-acc="${idx}" onchange="selAccount(${idx},this.checked)" aria-label="select all ${r.low_conf_count} flagged fields for ${esc(r.company)}"><span>select all</span></label>`:'';
+  const actions=r.written?`<span class="pill written">✓ Written to CRM</span>`
+    :`<div class="rev"><button class="go" aria-label="Write ${esc(r.company)} to CRM" onclick="writeOne(${idx},'${esc(r.company)}')">Write to CRM</button><button class="no" aria-label="Reject ${esc(r.company)}" onclick="noGo('${esc(r.company)}')">Reject</button></div>`;
+  return `<div class="card" id="card-${idx}"><div class="chead"><h3 class="cname">${esc(r.company)}</h3><span class="ckey">${esc(r.key)}</span>${resolved}<span class="ckey">${r.providers_called.length} providers · ${r.llm_calls} AI</span>${warn}${acctSel}
+    ${actions}</div>
+    <div class="tscroll"><table><thead><tr>${r.low_conf_count>0?'<th class="selcell"><span class="sr-only">accept</span></th>':''}<th>field</th><th>existing value</th><th>value from enrichment</th><th>confidence</th><th>reconciled value</th><th>method</th><th>source</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+async function refetch(id,field,key){
+  const f=await (await fetch('/api/refetch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({account:{key},field,user:CURRENT_USER})})).json();
+  if(!f.found){toast('No other source had a usable '+field);return;}
+  f.before=null;f.kept=false;const d=$('d-'+id);if(d)d.outerHTML=detailRow(f,id);const tr=$('f-'+id);if(tr)tr.outerHTML=rowHTML(f,id,key);toast(field+' found via '+f.source);
+}
+
+// ---------- write / suggest / reject ----------
+function submitSuggestions(scope){
+  const items=[...scope.querySelectorAll('.recon')].map(i=>({field:i.dataset.field,reconcile_from:i.dataset.raw,reconcile_to:i.value.trim()})).filter(it=>it.reconcile_from&&it.reconcile_to&&it.reconcile_from.toLowerCase()!==it.reconcile_to.toLowerCase());
+  if(!items.length)return;
+  fetch('/api/suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:CURRENT_USER,items})}).then(r=>r.json()).then(d=>{if(d.promotions.length)toast('✓ promoted to canonical (demo threshold: 1 user; production: 3): '+d.promotions.join(', '));});
+}
+async function writeAll(){const s=LAST.summary;
+  const lc=s.low_conf_total>0?`<p class="modal-warn">${s.low_conf_total} field${s.low_conf_total>1?'s':''} <b>need review</b> — confidence under 75%. <span class="review-link" onclick="reviewFirst()">Jump to them</span>, or write anyway.</p>`:'';
+  if(!await showModal({title:`Write ${s.enriched} records to CRM?`,bodyHTML:lc,confirmText:`Write ${s.enriched} to CRM`}))return;
+  submitSuggestions($('stage'));LAST.results.forEach(r=>{if(!r.skipped)r.written=true;});stepReview();
+  toast('✓ '+s.enriched+' records written to CRM');logAction('crm_write',s.enriched+' records');}
+async function writeOne(idx,name){if(!await showModal({title:`Write ${name} to CRM?`,confirmText:'Write to CRM'}))return;
+  const c=$('card-'+idx);if(c)submitSuggestions(c);LAST.results[idx].written=true;stepReview();
+  toast('✓ '+name+' written to CRM');logAction('crm_write',name);}
+async function noGo(name){if(!await showModal({title:`Reject ${name}?`,danger:true,confirmText:'Reject & flag',bodyHTML:`<p>Nothing writes to the CRM. The account is flagged for manual research.</p><label>Reason<select id="reject-reason"><option>Wrong company matched</option><option>Data looks stale</option><option>Low confidence</option><option>Other</option></select></label>`}))return;
+  const r=($('reject-reason')||{}).value||'';toast('⤳ '+name+' rejected → manual research'+(r?' · '+r:''));logAction('reject',name+(r?' · '+r:''));}
+async function reset(){$('menu').hidden=true;if(!await showModal({title:'Reset learned terms?',danger:true,confirmText:'Reset',bodyHTML:'<p>Forget every term the system learned from users (cold start). Seeded reference terms are kept.</p>'}))return;
+  await fetch('/api/reset',{method:'POST'});toast('Learned terms cleared');logAction('reset_terms','cleared learned terms');}
+function logAction(a,d){fetch('/api/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:CURRENT_USER,action:a,detail:d})});}
+
+// ---------- modal ----------
+let _mcb=null;
+function showModal(o){return new Promise(res=>{$('modal-title').textContent=o.title;$('modal-body').innerHTML=o.bodyHTML||'';const ok=$('modal-ok');ok.textContent=o.confirmText||'Confirm';ok.classList.toggle('danger',!!o.danger);$('modal').hidden=false;_mcb=res;ok.focus();});}
+function closeModal(v){$('modal').hidden=true;if(_mcb){_mcb(v);_mcb=null;}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('modal').hidden)closeModal(false);else if(!$('overlay').hidden)closeOverlay();}});
+
+// ---------- overlays (menu panels) ----------
+function openOverlay(html,label){const c=$('ov-card');c.innerHTML=html;if(label)c.setAttribute('aria-label',label);$('overlay').hidden=false;$('menu').hidden=true;c.querySelector('button,select,a')?.focus();}
+function closeOverlay(){$('overlay').hidden=true;}
+async function showTerms(){
+  const d=await (await fetch('/api/terms')).json();
+  const rows=d.terms.map(t=>`<div class="termrow"><span class="field">${esc(t.field)}</span> · <span class="agreed">${esc(t.agreed_term)}</span> ← <span class="aliases">${t.aliases.map(esc).join(', ')||'—'}</span></div>`).join('');
+  openOverlay(`<div class="ov-head"><h3>Canonical terms</h3><button class="ghost sm" onclick="closeOverlay()">Close</button></div><p class="psub">${d.terms.length} agreed terms · ${d.promoted} promoted by users. Visible to everyone.</p>${rows}`,'Canonical terms');
+}
+// ---------- admin panel ----------
+function openAdmin(tab){ADMIN=true;ADMIN_TAB=tab||ADMIN_TAB;$('menu').hidden=true;$('stepper').hidden=true;renderAdmin();window.scrollTo(0,0);}
+function closeAdmin(){ADMIN=false;$('stepper').hidden=false;renderStepper();renderStep();}
+function adminTab(id){ADMIN_TAB=id;renderAdmin();}
+function renderAdmin(){
+  const nav=ADMIN_TABS.map(t=>`<button class="${t.id===ADMIN_TAB?'active ':''}${t.id==='danger'?'danger':''}" onclick="adminTab('${t.id}')" aria-current="${t.id===ADMIN_TAB}">${esc(t.label)}</button>`).join('');
+  $('stage').innerHTML=`<div class="actions" style="margin:0 0 var(--s4)"><button class="ghost" onclick="closeAdmin()">← Back to enrichment</button></div>
+    <div class="admin-shell">
+      <nav class="admin-nav" aria-label="Admin sections">${nav}</nav>
+      <div class="admin-content panel" id="admin-content"><div class="loading"><span class="spin"></span><span>Loading…</span></div></div>
+    </div>`;
+  if(ADMIN_TAB==='activity')renderActivityTab();
+  else if(ADMIN_TAB==='costs')renderCostsTab();
+  else if(ADMIN_TAB==='enrichment')renderEnrichmentTab();
+  else renderDangerTab();
+  document.querySelector('.admin-nav button.active')?.scrollIntoView({behavior:'instant',inline:'center',block:'nearest'});
+}
+async function renderActivityTab(){
+  const d=await (await fetch('/api/audit?user='+CURRENT_USER)).json();
+  const rows=d.audit.length?d.audit.map(a=>`<div class="termrow"><span class="field">${esc(a.ts.slice(11))}</span> · <b>${esc(a.user)}</b> · <span class="action">${esc(a.action)}</span> ${esc(a.detail)}</div>`).join(''):'<p class="psub">No activity yet.</p>';
+  if(ADMIN_TAB!=='activity')return;
+  $('admin-content').innerHTML=`<h2 class="ptitle">Activity log</h2><p class="psub">${d.is_admin?'All users’ actions across the app.':'Your actions only.'}</p>${rows}`;
+}
+async function renderCostsTab(){
+  const d=await (await fetch('/api/costs?user='+CURRENT_USER)).json();
+  if(ADMIN_TAB!=='costs')return;
+  const c=$('admin-content');
+  if(!d.is_admin){c.innerHTML=`<h2 class="ptitle">Cost dashboard</h2><p class="psub">Admin only. Your runs so far: $${(d.my_total||0).toFixed(2)}.</p>`;return;}
+  const byUser=Object.entries(d.by_user).map(([u,cv])=>`<div class="kv"><span>${esc(u)}</span><span class="mono" style="color:var(--accent)">$${cv.toFixed(2)}</span></div>`).join('');
+  const provRows=Object.entries(d.by_provider).map(([p,cv])=>`<div class="kv"><span class="mono">${esc(p)}</span><span class="mono" style="color:var(--accent)">$${cv.toFixed(2)}</span></div>`).join('')
+    +(d.ai_cost?`<div class="kv"><span class="mono">AI reconciliation (LLM)</span><span class="mono" style="color:var(--accent)">$${d.ai_cost.toFixed(2)}</span></div>`:'')
+    +`<div class="kv" style="border-top:1px solid var(--border);padding-top:var(--s2);margin-top:var(--s1)"><span><b>Total</b></span><span class="mono" style="color:var(--accent)"><b>$${d.total.toFixed(2)}</b></span></div>`;
+  c.innerHTML=`<h2 class="ptitle">Cost dashboard</h2>
+    <p class="psub"><b style="color:var(--ink);font-size:20px;font-family:var(--mono)">$${d.total.toFixed(2)}</b> total across ${d.runs} run(s) — provider API credits + AI (illustrative).</p>
+    <div class="grpdiv">By user</div>${byUser||'<p class="psub">—</p>'}<div class="grpdiv">By provider</div>${provRows}`;
+}
+async function renderEnrichmentTab(){
+  const c=$('admin-content');
+  c.innerHTML=`<h2 class="ptitle">Enrichment log</h2><p class="psub">One row per field resolution — what was fetched, from where, and what it cost.</p>
+    <div class="filter-row">
+      <input id="ef-company" placeholder="Filter by company…" value="${esc(ENRICH_FILTERS.company)}" onkeydown="if(event.key==='Enter'){ENRICH_FILTERS.company=this.value;renderEnrichmentTab()}">
+      <select id="ef-field" onchange="ENRICH_FILTERS.field=this.value;renderEnrichmentTab()">
+        <option value="">All fields</option>
+        ${CATALOG.map(f=>`<option value="${esc(f.field)}" ${ENRICH_FILTERS.field===f.field?'selected':''}>${esc(flabel(f.field))}</option>`).join('')}
+      </select>
+      <button class="ghost sm" onclick="ENRICH_FILTERS.company=$('ef-company').value;renderEnrichmentTab()">Apply</button>
+    </div>
+    <div id="ef-table"><div class="loading"><span class="spin"></span><span>Loading…</span></div></div>`;
+  const params={user:CURRENT_USER};
+  if(ENRICH_FILTERS.company)params.company=ENRICH_FILTERS.company;
+  if(ENRICH_FILTERS.field)params.field=ENRICH_FILTERS.field;
+  const d=await (await fetch('/api/enrichment-log?'+new URLSearchParams(params))).json();
+  if(ADMIN_TAB!=='enrichment')return;
+  const t=$('ef-table');
+  if(!d.is_admin){t.innerHTML='<p class="psub">Admin only.</p>';return;}
+  if(!d.rows.length){t.innerHTML='<div class="empty-review">No enrichment activity yet.</div>';return;}
+  const parseVal=v=>{try{return JSON.parse(v)}catch{return v}};
+  const rows=d.rows.map(r=>{
+    const conf=r.confidence==null?null:Number(r.confidence);
+    const confCellHTML=conf==null?'<span class="conf">–</span>':`<span class="conf"><span class="cbar"><i class="${conf<0.75?'low':''}" style="width:${Math.round(conf*100)}%"></i></span><span class="${conf<0.75?'lownum':''}">${conf.toFixed(2)}</span></span>`;
+    return `<tr>
+      <td class="mono" data-label="time">${esc(r.ts)}</td>
+      <td data-label="company">${esc(r.company)}</td>
+      <td data-label="field">${esc(flabel(r.field))}</td>
+      <td class="mono" data-label="service">${esc(r.service||'—')}</td>
+      <td data-label="before → after"><span class="was">${show(parseVal(r.before_value))}</span><span class="arrow">→</span><span class="now">${show(parseVal(r.after_value))}</span></td>
+      <td data-label="confidence">${confCellHTML}</td>
+      <td class="mono" data-label="cost" style="color:${r.cost?'var(--accent)':'var(--faint)'}">$${Number(r.cost||0).toFixed(3)}</td>
+      <td data-label="status">${r.is_successful?'<span class="badge b-det">resolved</span>':'<span class="badge b-fail">failed</span>'}</td>
+    </tr>`;}).join('');
+  t.innerHTML=`<div class="card"><div class="tscroll"><table><thead><tr><th>time</th><th>company</th><th>field</th><th>service</th><th>before → after</th><th>confidence</th><th>cost</th><th>status</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+function renderDangerTab(){
+  $('admin-content').innerHTML=`<h2 class="ptitle">Danger zone</h2><p class="psub">Destructive actions. These cannot be undone.</p>
+    <div class="danger-block"><h3>Reset learned terms</h3>
+      <p class="psub">Forget every term the system learned from users (cold start). Seeded reference terms are kept.</p>
+      <button class="ghost danger" onclick="reset()">Reset learned terms</button>
+    </div>`;
+}
+
+// ---------- toast ----------
+let _tt;function toast(m,ms){const el=$('toast');el.innerHTML=m;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),ms||2000);}
+
+init();
+</script>
+</body>
+</html>

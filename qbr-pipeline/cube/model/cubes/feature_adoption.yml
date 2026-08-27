@@ -1,0 +1,47 @@
+cubes:
+  - name: feature_adoption
+    public: false
+    sql: >
+      SELECT * FROM read_parquet('/data/serving/rpt_feature_adoption.parquet')
+
+    dimensions:
+      - name: tenant_id
+        sql: tenant_id
+        type: string
+      - name: quarter_label
+        sql: quarter_label
+        type: string
+      - name: feature
+        sql: feature
+        type: string
+        description: The engine capability, expressed as the effect type it fires.
+      - name: adoption_state
+        sql: adoption_state
+        type: string
+        description: never_used, lapsed, newly_adopted, growing, declining or steady.
+      - name: is_entitled
+        sql: is_entitled
+        type: boolean
+        description: Whether the account's plan covers this feature.
+      - name: is_monetary
+        sql: is_monetary
+        type: boolean
+      - name: plan_tier
+        sql: plan_tier
+        type: string
+
+    measures:
+      - name: usage_count
+        sql: usage_count
+        type: sum
+      - name: prior_usage_count
+        sql: prior_usage_count
+        type: sum
+      - name: feature_discount_value
+        sql: feature_discount_value
+        type: sum
+      - name: usage_qoq
+        type: number
+        sql: "({usage_count} - {prior_usage_count}) / NULLIF({prior_usage_count}, 0)"
+      - name: features_tracked
+        type: count

@@ -1,0 +1,74 @@
+cubes:
+  - name: anomalies
+    public: false
+    sql: >
+      SELECT * FROM read_parquet('/data/serving/rpt_anomalies.parquet')
+
+    dimensions:
+      - name: tenant_id
+        sql: tenant_id
+        type: string
+      - name: quarter_label
+        sql: quarter_label
+        type: string
+      - name: week_start
+        sql: week_start
+        type: time
+        description: Monday of the week the movement was detected in.
+      - name: metric_name
+        sql: metric_name
+        type: string
+      - name: entity_type
+        sql: entity_type
+        type: string
+      - name: entity_id
+        sql: entity_id
+        type: string
+      - name: entity_label
+        sql: entity_label
+        type: string
+        description: Human-readable name of the campaign, application or tenant.
+      - name: is_paid_feature
+        sql: is_paid_feature
+        type: boolean
+      - name: affects_revenue
+        sql: affects_revenue
+        type: boolean
+      - name: is_increase
+        sql: is_increase
+        type: boolean
+      - name: plan_tier
+        sql: plan_tier
+        type: string
+      - name: currency
+        sql: currency
+        type: string
+
+    measures:
+      - name: anomaly_count
+        type: count
+      - name: metric_value
+        sql: metric_value
+        type: max
+      - name: baseline_mean
+        sql: baseline_mean
+        type: max
+      - name: z_score
+        sql: z_score
+        type: max
+        description: Standard deviations from an eight-week trailing baseline.
+      - name: relative_change
+        sql: relative_change
+        type: max
+      - name: movement_magnitude
+        sql: movement_magnitude
+        type: max
+        description: >
+          Absolute movement, volume-scaled for rates. The raw input the salience
+          ranker weights. Not a verdict on whether the movement matters.
+      - name: value_weight
+        sql: value_weight
+        type: max
+      - name: volume
+        sql: volume
+        type: sum

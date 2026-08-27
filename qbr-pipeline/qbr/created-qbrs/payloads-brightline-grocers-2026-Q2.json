@@ -1,0 +1,382 @@
+{
+  "context": {
+    "tenant_id": "brightline-grocers",
+    "tenant_name": "Brightline Grocers",
+    "plan_tier": "Mid-Market",
+    "country": "GB",
+    "currency": "GBP",
+    "quarter": "2026-Q2",
+    "prior_quarter": "2026-Q1",
+    "has_loyalty": false,
+    "sessions_evaluated": "24222",
+    "cart_value": "1132603.23",
+    "sessions_qoq": "0.0686962276637988",
+    "api_error_rate": "0.004760960126958937",
+    "net_points_outstanding": "0"
+  },
+  "focus": null,
+  "registry": [
+    {
+      "id": "executive_summary",
+      "title": "Executive summary",
+      "built": false,
+      "description": "Three-sentence synthesis of the other selected sections. Always last to generate because it reads their outputs.\n"
+    },
+    {
+      "id": "usage_volume",
+      "title": "Usage and volume",
+      "built": false,
+      "description": "Session evaluation volume and cart value against the previous quarter, split by shopper segment. The baseline \"are they using it more\" question.\n"
+    },
+    {
+      "id": "feature_adoption",
+      "title": "Feature adoption",
+      "built": true,
+      "description": "Which engine capabilities the account fires, which are newly adopted or lapsing, and which are covered by their plan but never used. Use when the conversation is about depth of use or expansion headroom.\n"
+    },
+    {
+      "id": "campaign_performance",
+      "title": "Campaign performance",
+      "built": true,
+      "description": "Per-campaign redemptions, redemption rate and discount value with a quarter-over-quarter comparison, sliced by shopper segment. Use when the customer wants to know which promotions worked.\n"
+    },
+    {
+      "id": "loyalty_health",
+      "title": "Loyalty health",
+      "built": false,
+      "description": "Points issued against points burned, and the resulting outstanding liability. Only relevant to accounts running a loyalty programme.\n"
+    },
+    {
+      "id": "integration_health",
+      "title": "Integration health",
+      "built": false,
+      "description": "API error rates and latency by application. Use when there were incidents worth pre-empting, or when the account has raised reliability concerns.\n"
+    },
+    {
+      "id": "anomalies",
+      "title": "Worth discussing",
+      "built": true,
+      "description": "The handful of movements that are both statistically unusual and commercially material, ranked. Use in almost every QBR; this is the section that makes the review feel prepared rather than reported.\n"
+    },
+    {
+      "id": "relationship_context",
+      "title": "Since we last spoke",
+      "built": true,
+      "description": "What was agreed at the last review and where each action stands, plus the calls and notes bearing on this quarter. The only section with no query against the warehouse. Use in any QBR that follows a previous one.\n"
+    },
+    {
+      "id": "expansion_signals",
+      "title": "Expansion signals",
+      "built": false,
+      "description": "Paid features the account is entitled to but does not use, and capabilities whose usage is growing fast enough to justify a bigger plan. Use when the CSM is preparing a commercial conversation.\n"
+    }
+  ],
+  "sections": [
+    {
+      "id": "feature_adoption",
+      "title": "Feature adoption",
+      "writing_rules": {
+        "must_cover": [
+          "Any feature in a newly_adopted or growing state, named, with its volume",
+          "Any feature that is entitled but never used, which is an expansion opening",
+          "Any feature that has lapsed or is declining"
+        ],
+        "must_not": [
+          "Describing a feature as unavailable when is_entitled is true",
+          "Any figure that does not appear in the payload",
+          "Inventing a reason for adoption or non-adoption"
+        ],
+        "tone": "A CSM presenting to their customer. Concrete about what changed. Frame unused entitlements as available capability, not as a failure.\n",
+        "max_words": 120
+      },
+      "payload": {
+        "rows": [
+          {
+            "feature": "showNotification",
+            "adoption_state": "growing",
+            "is_entitled": true,
+            "usage_count": "12722",
+            "prior_usage_count": "6167",
+            "usage_qoq": "1.0629155180801038"
+          },
+          {
+            "feature": "setDiscount",
+            "adoption_state": "steady",
+            "is_entitled": true,
+            "usage_count": "3507",
+            "prior_usage_count": "3225",
+            "usage_qoq": "0.08744186046511628"
+          },
+          {
+            "feature": "acceptCoupon",
+            "adoption_state": "never_used",
+            "is_entitled": true,
+            "usage_count": "0",
+            "prior_usage_count": "0",
+            "usage_qoq": null
+          },
+          {
+            "feature": "addLoyaltyPoints",
+            "adoption_state": "never_used",
+            "is_entitled": false,
+            "usage_count": "0",
+            "prior_usage_count": "0",
+            "usage_qoq": null
+          },
+          {
+            "feature": "rejectCoupon",
+            "adoption_state": "never_used",
+            "is_entitled": true,
+            "usage_count": "0",
+            "prior_usage_count": "0",
+            "usage_qoq": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "campaign_performance",
+      "title": "Campaign performance",
+      "writing_rules": {
+        "must_cover": [
+          "The single largest quarter-over-quarter mover, named, with both values",
+          "Whether that movement concentrates in one shopper segment, using the breakdown",
+          "One forward-looking hook the CSM can open a conversation with"
+        ],
+        "must_not": [
+          "Speculating about causes that are not present in the data",
+          "Any figure that does not appear in the payload",
+          "Recommending a specific discount level or commercial term"
+        ],
+        "tone": "A CSM presenting to their customer. Factual and specific. No hype, no apology, no filler. Name campaigns by name.\n",
+        "max_words": 130
+      },
+      "payload": {
+        "rows": [
+          {
+            "campaign_name": "Weekly Shop Saver",
+            "campaign_type": "cart",
+            "is_paid_feature": false,
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null,
+            "discount_value": "22471.68",
+            "discount_value_qoq": "0.0726825321434626"
+          },
+          {
+            "campaign_name": "Aisle Reminder",
+            "campaign_type": "messaging",
+            "is_paid_feature": false,
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null,
+            "discount_value": "0",
+            "discount_value_qoq": null
+          }
+        ],
+        "segment_breakdown": [
+          {
+            "campaign_name": "Weekly Shop Saver",
+            "profile_segment": "vip",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Aisle Reminder",
+            "profile_segment": "new",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Aisle Reminder",
+            "profile_segment": "returning",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Weekly Shop Saver",
+            "profile_segment": "new",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Weekly Shop Saver",
+            "profile_segment": "returning",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Aisle Reminder",
+            "profile_segment": "vip",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "anomalies",
+      "title": "Worth discussing",
+      "writing_rules": {
+        "must_cover": [
+          "Each ranked movement, named, with its observed value and its baseline",
+          "Why it is worth raising, in business terms rather than statistical ones",
+          "What the CSM should ask or say about it"
+        ],
+        "must_not": [
+          "Mentioning z-scores or standard deviations to the customer",
+          "Any movement not present in the ranked payload",
+          "Any figure that does not appear in the payload",
+          "Asserting a cause the data does not establish"
+        ],
+        "tone": "A CSM who has done their homework. Lead with what it means for the customer, not with how it was detected. Direct, no alarm.\n",
+        "max_words": 160
+      },
+      "payload": {
+        "ranked_movements": [
+          {
+            "metric_name": "server_error_rate",
+            "entity_type": "application",
+            "entity_label": "Brightline Grocers Web",
+            "week_start": "2026-06-01T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "4.55223540443635",
+            "metric_value": "0.019417475728155338",
+            "baseline_mean": "0.004582487330829103",
+            "relative_change": "3.237322293838652",
+            "movement_magnitude": "3.056007609849204",
+            "value_weight": "0.5",
+            "volume": "206",
+            "salience": 1.0887,
+            "salience_reasons": [
+              "moving in the wrong direction",
+              "customer-visible reliability"
+            ],
+            "is_deterioration": true
+          },
+          {
+            "metric_name": "server_error_rate",
+            "entity_type": "application",
+            "entity_label": "Brightline Grocers Mobile",
+            "week_start": "2026-06-15T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "2.8807822564884433",
+            "metric_value": "0.010638297872340425",
+            "baseline_mean": "0.0031385711783508334",
+            "relative_change": "2.3895353228631677",
+            "movement_magnitude": "1.4099486184700432",
+            "value_weight": "0.5",
+            "volume": "188",
+            "salience": 0.9443,
+            "salience_reasons": [
+              "moving in the wrong direction",
+              "customer-visible reliability",
+              "thin volume, damped"
+            ],
+            "is_deterioration": true
+          }
+        ],
+        "candidates_considered": 5,
+        "deliberately_suppressed": [
+          {
+            "entity_label": "setDiscount",
+            "metric_name": "effects_fired",
+            "z_score": "3.0936454267819",
+            "salience": 0.0802,
+            "why": []
+          },
+          {
+            "entity_label": "showNotification",
+            "metric_name": "effects_fired",
+            "z_score": "2.9566247316492746",
+            "salience": 0.0096,
+            "why": [
+              "low commercial value, demoted"
+            ]
+          },
+          {
+            "entity_label": "setDiscount",
+            "metric_name": "effects_fired",
+            "z_score": "-2.5065754625163144",
+            "salience": 0.0708,
+            "why": [
+              "moving in the wrong direction"
+            ]
+          }
+        ],
+        "evidence": [],
+        "context_corpus": {
+          "documents_available": 0,
+          "documents_searchable": 0,
+          "withheld_internal": 0,
+          "sources": []
+        },
+        "context_rules": [
+          "Context explains a movement. It is never the source of a figure.",
+          "Cite evidence by its citation_id in square brackets, for example [C1].",
+          "Quote only what a snippet says, character for character. Paraphrase otherwise.",
+          "Do not cite a citation_id that is not in this payload."
+        ]
+      }
+    },
+    {
+      "id": "relationship_context",
+      "title": "Since we last spoke",
+      "writing_rules": {
+        "must_cover": [
+          "Every action agreed at the previous review, with its current status",
+          "Who owns each one that is still open"
+        ],
+        "must_not": [
+          "Any figure or date; this section is qualitative, and figures belong in the sections that queried the warehouse for them",
+          "Any commitment not present in the payload",
+          "Characterising an open action as a failure on the customer's part"
+        ],
+        "tone": "A CSM picking up a conversation, not auditing one. Brief. State what was agreed and where it stands.\n",
+        "max_words": 110
+      },
+      "payload": {
+        "rows": [],
+        "commitments": [],
+        "context_corpus": {
+          "documents_available": 0,
+          "documents_searchable": 0,
+          "withheld_internal": 0,
+          "sources": []
+        },
+        "context_rules": [
+          "Context explains a movement. It is never the source of a figure.",
+          "Cite evidence by its citation_id in square brackets, for example [C1].",
+          "Quote only what a snippet says, character for character. Paraphrase otherwise.",
+          "Do not cite a citation_id that is not in this payload."
+        ]
+      }
+    }
+  ]
+}

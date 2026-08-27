@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: stg_session_evaluations
+    description: One row per cart evaluation. Carries PII by design.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: tenant
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['acme-commerce', 'nordwind-retail', 'fastcart', 'brightline-grocers']
+      - name: state
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['closed', 'cancelled']
+      - name: evaluated_at
+        data_tests: [not_null]
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "cart_total >= 0"
+      - expression_is_true:
+          arguments:
+            expression: "latency_ms > 0"
+
+  - name: stg_effects
+    description: One row per effect returned to the integration.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: effect_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['setDiscount', 'acceptCoupon', 'rejectCoupon', 'addLoyaltyPoints', 'showNotification']
+      - name: campaign_id
+        data_tests: [not_null]
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "discount_value >= 0"
+      - expression_is_true:
+          arguments:
+            expression: "points >= 0"
+      # A rejected coupon must never carry a discount. If it does, every
+      # redemption number downstream is overstated.
+      - expression_is_true:
+          arguments:
+            expression: "not (effect_type = 'rejectCoupon' and discount_value > 0)"
+
+  - name: stg_integration_requests
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: http_status
+        data_tests: [not_null]
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "is_server_error = (http_status >= 500)"
+
+  - name: stg_loyalty_events
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: direction
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['issue', 'burn']
+    data_tests:
+      - expression_is_true:
+          arguments:
+            expression: "points_issued >= 0 and points_burned >= 0"
+      - expression_is_true:
+          arguments:
+            expression: "(direction = 'burn') = (points_delta < 0)"

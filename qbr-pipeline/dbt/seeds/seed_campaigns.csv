@@ -1,0 +1,10 @@
+campaign_id,tenant,campaign_name,campaign_type,is_paid_feature
+acme-winback,acme-commerce,Winback Reactivation,winback,True
+acme-loyalty-tier,acme-commerce,Loyalty Tier Accelerator,loyalty,True
+acme-basket-boost,acme-commerce,Basket Boost,cart,False
+nord-seasonal,nordwind-retail,Seasonal Markdown,cart,False
+nord-coupon-drop,nordwind-retail,Coupon Drop,coupon,True
+fast-free-ship,fastcart,Free Shipping Threshold,cart,False
+fast-points-launch,fastcart,Points Launch,loyalty,True
+bright-weekly,brightline-grocers,Weekly Shop Saver,cart,False
+bright-notify,brightline-grocers,Aisle Reminder,messaging,False

@@ -1,0 +1,9 @@
+application_id,tenant,channel,application_name
+acme-commerce-web,acme-commerce,web,Acme Commerce Web
+acme-commerce-mobile,acme-commerce,mobile,Acme Commerce Mobile
+nordwind-retail-web,nordwind-retail,web,Nordwind Retail Web
+nordwind-retail-mobile,nordwind-retail,mobile,Nordwind Retail Mobile
+fastcart-web,fastcart,web,FastCart Web
+fastcart-mobile,fastcart,mobile,FastCart Mobile
+brightline-grocers-web,brightline-grocers,web,Brightline Grocers Web
+brightline-grocers-mobile,brightline-grocers,mobile,Brightline Grocers Mobile

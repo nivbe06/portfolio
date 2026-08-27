@@ -1,0 +1,31 @@
+# Action items agreed at the 2026-Q1 QBR. Carried into the Q2 review so the
+# customer sees what was promised and what happened, which is the thing account
+# teams most often fail to bring.
+source: commitment
+source_id: commit-2026-Q1-acme
+date: 2026-03-19
+tenant_id: acme-commerce
+title: Actions agreed at the 2026-Q1 QBR
+participants: ["Priya Raman (Acme, Head of CRM)", "account team"]
+entities: [Winback Reactivation, Basket Boost, Loyalty Tier Accelerator, addLoyaltyPoints]
+visibility: customer_safe
+
+actions:
+  - id: A1
+    text: Review Winback Reactivation eligibility against margin before the Q2 campaign refresh.
+    owner: Acme
+    status: done
+    closed_on: 2026-04-07
+    note: Eligibility narrowed from 180 to 90 days of inactivity.
+
+  - id: A2
+    text: Agree a points expiry or redemption catalogue so the loyalty balance stops accruing.
+    owner: Acme
+    status: open
+    note: Raised again on the 2026-06-18 call. Still unscheduled.
+
+  - id: A3
+    text: Share Basket Boost segment performance so Acme can plan Q3 budget.
+    owner: account team
+    status: done
+    closed_on: 2026-04-22

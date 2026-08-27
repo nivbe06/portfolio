@@ -1,0 +1,58 @@
+id: feature_adoption
+title: Feature adoption
+version: 1
+
+include_when: "quarters_of_history >= 2"
+
+query:
+  view: qbr_adoption
+  measures:
+    - usage_count
+    - prior_usage_count
+    - usage_qoq
+  dimensions:
+    - feature
+    - adoption_state
+    - is_entitled
+  filters:
+    - member: quarter_label
+      operator: equals
+      values: ["{quarter}"]
+  order:
+    - [usage_count, desc]
+  limit: 30
+
+trend:
+  view: qbr_adoption
+  measures: [usage_count]
+  dimensions: [quarter_label, feature]
+  order:
+    - [quarter_label, asc]
+  limit: 200
+
+charts:
+  - type: line
+    title: Feature usage by quarter
+    metric: usage_count
+    by: quarter_label
+    group: feature
+    format: number
+    source: trend
+  - type: state_table
+    title: Adoption state this quarter
+    columns: [feature, adoption_state, usage_count, usage_qoq, is_entitled]
+    source: query
+
+narrative:
+  must_cover:
+    - Any feature in a newly_adopted or growing state, named, with its volume
+    - Any feature that is entitled but never used, which is an expansion opening
+    - Any feature that has lapsed or is declining
+  must_not:
+    - Describing a feature as unavailable when is_entitled is true
+    - Any figure that does not appear in the payload
+    - Inventing a reason for adoption or non-adoption
+  tone: >
+    A CSM presenting to their customer. Concrete about what changed. Frame
+    unused entitlements as available capability, not as a failure.
+  max_words: 120

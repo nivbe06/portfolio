@@ -1,0 +1,24 @@
+[
+  {
+    "domain": "brightcart.io",
+    "company_name": "BrightCart",
+    "email": "dana@brightcart.io",
+    "existing": {
+      "industry": null, "country": null, "employee_count": null,
+      "ecommerce_platform": null, "contact_email": null,
+      "contact_phone": null, "seniority_function": null
+    },
+    "_demo_note": "NEW company, SAME variants as batch A: industry 'Software', title 'Director of Growth', platform 'sfcc'. All resolve deterministically via learned/seeded rules -> 0 LLM."
+  },
+  {
+    "domain": "shopwave.de",
+    "company_name": "ShopWave",
+    "email": "jonas@shopwave.de",
+    "existing": {
+      "industry": null, "country": null, "employee_count": null,
+      "ecommerce_platform": null, "contact_email": null,
+      "contact_phone": null, "seniority_function": null
+    },
+    "_demo_note": "One genuinely-new variant: industry 'webshop' -> 1 LLM call (the tail never fully vanishes), then cached too."
+  }
+]

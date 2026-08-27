@@ -1,0 +1,5 @@
+tenant,tenant_name,domain,plan_tier,country,currency,entitlements,has_loyalty_entitlement,has_referrals_entitlement
+acme-commerce,Acme Commerce,acme-commerce.com,Enterprise,DE,EUR,campaigns|coupons|loyalty|referrals,True,True
+nordwind-retail,Nordwind Retail,nordwind-retail.de,Enterprise,DE,EUR,campaigns|coupons|loyalty,True,False
+fastcart,FastCart,fastcart.io,Mid-Market,US,USD,campaigns|coupons|loyalty,True,False
+brightline-grocers,Brightline Grocers,brightline-grocers.co.uk,Mid-Market,GB,GBP,campaigns|coupons|referrals,False,True

@@ -1,0 +1,95 @@
+cubes:
+  - name: campaign_performance
+    # Not queryable. Only the qbr_campaigns view is exposed, which is what makes
+    # "the LLM queries metrics, never tables" a structural property rather than
+    # a line in a prompt.
+    public: false
+    sql: >
+      SELECT * FROM read_parquet('/data/serving/rpt_qbr_campaign_performance.parquet')
+
+    dimensions:
+      - name: tenant_id
+        sql: tenant_id
+        type: string
+      - name: quarter_label
+        sql: quarter_label
+        type: string
+        description: Reporting quarter, e.g. 2026-Q2.
+      - name: campaign_id
+        sql: campaign_id
+        type: string
+      - name: campaign_name
+        sql: campaign_name
+        type: string
+      - name: campaign_type
+        sql: campaign_type
+        type: string
+      - name: is_paid_feature
+        sql: is_paid_feature
+        type: boolean
+        description: Whether this campaign sits behind a paid entitlement.
+      - name: plan_tier
+        sql: plan_tier
+        type: string
+      - name: currency
+        sql: currency
+        type: string
+      - name: profile_segment
+        sql: profile_segment
+        type: string
+        description: Shopper segment (new, returning, vip).
+
+    measures:
+      - name: redemptions
+        sql: redemptions
+        type: sum
+        description: Coupons successfully redeemed.
+      - name: redemption_attempts
+        sql: redemption_attempts
+        type: sum
+        description: Coupon redemption attempts, successful or not.
+      - name: rejections
+        sql: rejections
+        type: sum
+      - name: discount_value
+        sql: discount_value
+        type: sum
+        description: Total discount granted, in the account's currency.
+      - name: effects_fired
+        sql: effects_fired
+        type: sum
+      - name: sessions_with_effect
+        sql: sessions_with_effect
+        type: sum
+
+      # Rate measures are defined over the component measures, never stored as a
+      # column and summed. Averaging a stored rate across segments gives the
+      # average-of-averages answer, which is wrong and looks right.
+      - name: redemption_rate
+        type: number
+        sql: "{redemptions} / NULLIF({redemption_attempts}, 0)"
+        description: Redemptions divided by attempts, recomputed at whatever grain is queried.
+
+      - name: prior_redemptions
+        sql: prior_redemptions
+        type: sum
+      - name: prior_redemption_attempts
+        sql: prior_redemption_attempts
+        type: sum
+      - name: prior_discount_value
+        sql: prior_discount_value
+        type: sum
+
+      - name: prior_redemption_rate
+        type: number
+        sql: "{prior_redemptions} / NULLIF({prior_redemption_attempts}, 0)"
+        description: The same rate for the preceding quarter, computed in the warehouse.
+
+      - name: redemption_rate_qoq
+        type: number
+        sql: "({redemption_rate} - {prior_redemption_rate}) / NULLIF({prior_redemption_rate}, 0)"
+        description: Relative change in redemption rate against the previous quarter.
+
+      - name: discount_value_qoq
+        type: number
+        sql: "({discount_value} - {prior_discount_value}) / NULLIF({prior_discount_value}, 0)"

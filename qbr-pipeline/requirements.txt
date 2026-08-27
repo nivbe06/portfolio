@@ -1,0 +1,5 @@
+pyjwt
+requests
+pyyaml
+dbt-core>=1.11
+dbt-duckdb>=1.10

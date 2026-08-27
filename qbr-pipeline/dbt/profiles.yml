@@ -1,0 +1,10 @@
+talon_qbr:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # Relative to this profiles.yml, which lives inside the project.
+      path: "../data/warehouse.duckdb"
+      threads: 4
+      extensions:
+        - json

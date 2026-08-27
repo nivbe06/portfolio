@@ -1,0 +1,75 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Gzipped JSONL written by generate/gen_logs.py, hive-partitioned as
+      month=YYYY-MM/tenant=<slug>. DuckDB reads these in place; nothing is
+      loaded first.
+
+      Two deliberate choices here:
+
+      1. `format='newline_delimited'` is explicit. DuckDB's default is 'array',
+         and auto-detection over a .gz glob is where JSONL loads usually fail.
+
+      2. Columns are declared, not inferred. read_json_auto samples 20,480
+         objects for type inference, which mistypes sparse fields across two
+         million rows. Declaring them is faster and makes the schema a contract
+         rather than a guess.
+
+      `hive_partitioning=true` yields `month` for free. The `tenant` partition
+      key is shadowed by the tenant column in the payload, which is what we
+      want, so partition pruning applies to month only.
+    meta:
+      # Required whenever external_location contains braces, which the columns
+      # spec always does.
+      formatter: oldstyle
+    tables:
+      - name: session_evaluations
+        description: One row per cart evaluation. Carries PII (profile_email).
+        config:
+          external_location: >
+            read_json('{{ env_var('TALON_RAW_ROOT', '../data/raw') }}/session_evaluations/**/*.jsonl.gz',
+              format='newline_delimited', compression='gzip',
+              hive_partitioning=true, union_by_name=true,
+              columns={'event_id':'VARCHAR','occurred_at':'TIMESTAMP','tenant':'VARCHAR',
+                       'application_id':'VARCHAR','session_id':'VARCHAR','profile_id':'VARCHAR',
+                       'profile_email':'VARCHAR','profile_segment':'VARCHAR','cart_total':'DOUBLE',
+                       'currency':'VARCHAR','cart_item_count':'INTEGER',
+                       'evaluated_campaigns':'VARCHAR[]','ruleset_version':'INTEGER',
+                       'latency_ms':'INTEGER','state':'VARCHAR'})
+
+      - name: effects
+        description: One row per effect the engine returned to the integration.
+        config:
+          external_location: >
+            read_json('{{ env_var('TALON_RAW_ROOT', '../data/raw') }}/effects/**/*.jsonl.gz',
+              format='newline_delimited', compression='gzip',
+              hive_partitioning=true, union_by_name=true,
+              columns={'event_id':'VARCHAR','occurred_at':'TIMESTAMP','tenant':'VARCHAR',
+                       'session_id':'VARCHAR','campaign_id':'VARCHAR','ruleset_id':'VARCHAR',
+                       'effect_type':'VARCHAR','discount_value':'DOUBLE','points':'INTEGER',
+                       'currency':'VARCHAR','coupon_code':'VARCHAR'})
+
+      - name: integration_requests
+        description: API-layer request log per application.
+        config:
+          external_location: >
+            read_json('{{ env_var('TALON_RAW_ROOT', '../data/raw') }}/integration_requests/**/*.jsonl.gz',
+              format='newline_delimited', compression='gzip',
+              hive_partitioning=true, union_by_name=true,
+              columns={'event_id':'VARCHAR','occurred_at':'TIMESTAMP','tenant':'VARCHAR',
+                       'application_id':'VARCHAR','endpoint':'VARCHAR','http_status':'INTEGER',
+                       'error_code':'VARCHAR','latency_ms':'INTEGER'})
+
+      - name: loyalty_events
+        description: Points issued and burned. Carries PII (profile_email).
+        config:
+          external_location: >
+            read_json('{{ env_var('TALON_RAW_ROOT', '../data/raw') }}/loyalty_events/**/*.jsonl.gz',
+              format='newline_delimited', compression='gzip',
+              hive_partitioning=true, union_by_name=true,
+              columns={'event_id':'VARCHAR','occurred_at':'TIMESTAMP','tenant':'VARCHAR',
+                       'profile_id':'VARCHAR','profile_email':'VARCHAR','programme_id':'VARCHAR',
+                       'points_delta':'INTEGER','direction':'VARCHAR','tier_before':'VARCHAR',
+                       'tier_after':'VARCHAR','reason':'VARCHAR'})

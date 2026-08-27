@@ -1,0 +1,73 @@
+cubes:
+  - name: account_overview
+    public: false
+    sql: >
+      SELECT * FROM read_parquet('/data/serving/rpt_qbr_overview.parquet')
+
+    dimensions:
+      - name: tenant_id
+        sql: tenant_id
+        type: string
+      - name: tenant_name
+        sql: tenant_name
+        type: string
+      - name: quarter_label
+        sql: quarter_label
+        type: string
+      - name: profile_segment
+        sql: profile_segment
+        type: string
+      - name: plan_tier
+        sql: plan_tier
+        type: string
+      - name: country
+        sql: country
+        type: string
+      - name: currency
+        sql: currency
+        type: string
+      - name: has_loyalty_entitlement
+        sql: has_loyalty_entitlement
+        type: boolean
+      - name: has_referrals_entitlement
+        sql: has_referrals_entitlement
+        type: boolean
+
+    measures:
+      - name: sessions_evaluated
+        sql: sessions_evaluated
+        type: sum
+      - name: distinct_profiles
+        sql: distinct_profiles
+        type: sum
+      - name: cart_value
+        sql: cart_value
+        type: sum
+      - name: cancelled_sessions
+        sql: cancelled_sessions
+        type: sum
+      - name: prior_sessions_evaluated
+        sql: prior_sessions_evaluated
+        type: sum
+      - name: sessions_qoq
+        type: number
+        sql: "({sessions_evaluated} - {prior_sessions_evaluated}) / NULLIF({prior_sessions_evaluated}, 0)"
+      - name: api_requests
+        sql: api_requests
+        type: sum
+      - name: api_server_errors
+        sql: api_server_errors
+        type: sum
+      - name: api_error_rate
+        type: number
+        sql: "{api_server_errors} / NULLIF({api_requests}, 0)"
+      - name: points_issued
+        sql: points_issued
+        type: sum
+      - name: points_burned
+        sql: points_burned
+        type: sum
+      - name: net_points_outstanding
+        type: number
+        sql: "{points_issued} - {points_burned}"
+        description: Outstanding loyalty liability. Rising means issuance outruns redemption.

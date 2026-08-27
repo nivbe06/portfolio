@@ -1,0 +1,472 @@
+{
+  "context": {
+    "tenant_id": "acme-commerce",
+    "tenant_name": "Acme Commerce",
+    "plan_tier": "Enterprise",
+    "country": "DE",
+    "currency": "EUR",
+    "quarter": "2026-Q2",
+    "prior_quarter": "2026-Q1",
+    "has_loyalty": true,
+    "sessions_evaluated": "101866",
+    "cart_value": "4775953.760000002",
+    "sessions_qoq": "0.0685057953532281",
+    "api_error_rate": "0.005583184761189828",
+    "net_points_outstanding": "547119"
+  },
+  "focus": null,
+  "registry": [
+    {
+      "id": "executive_summary",
+      "title": "Executive summary",
+      "built": false,
+      "description": "Three-sentence synthesis of the other selected sections. Always last to generate because it reads their outputs.\n"
+    },
+    {
+      "id": "usage_volume",
+      "title": "Usage and volume",
+      "built": false,
+      "description": "Session evaluation volume and cart value against the previous quarter, split by shopper segment. The baseline \"are they using it more\" question.\n"
+    },
+    {
+      "id": "feature_adoption",
+      "title": "Feature adoption",
+      "built": true,
+      "description": "Which engine capabilities the account fires, which are newly adopted or lapsing, and which are covered by their plan but never used. Use when the conversation is about depth of use or expansion headroom.\n"
+    },
+    {
+      "id": "campaign_performance",
+      "title": "Campaign performance",
+      "built": true,
+      "description": "Per-campaign redemptions, redemption rate and discount value with a quarter-over-quarter comparison, sliced by shopper segment. Use when the customer wants to know which promotions worked.\n"
+    },
+    {
+      "id": "loyalty_health",
+      "title": "Loyalty health",
+      "built": false,
+      "description": "Points issued against points burned, and the resulting outstanding liability. Only relevant to accounts running a loyalty programme.\n"
+    },
+    {
+      "id": "integration_health",
+      "title": "Integration health",
+      "built": false,
+      "description": "API error rates and latency by application. Use when there were incidents worth pre-empting, or when the account has raised reliability concerns.\n"
+    },
+    {
+      "id": "anomalies",
+      "title": "Worth discussing",
+      "built": true,
+      "description": "The handful of movements that are both statistically unusual and commercially material, ranked. Use in almost every QBR; this is the section that makes the review feel prepared rather than reported.\n"
+    },
+    {
+      "id": "relationship_context",
+      "title": "Since we last spoke",
+      "built": true,
+      "description": "What was agreed at the last review and where each action stands, plus the calls and notes bearing on this quarter. The only section with no query against the warehouse. Use in any QBR that follows a previous one.\n"
+    },
+    {
+      "id": "expansion_signals",
+      "title": "Expansion signals",
+      "built": false,
+      "description": "Paid features the account is entitled to but does not use, and capabilities whose usage is growing fast enough to justify a bigger plan. Use when the CSM is preparing a commercial conversation.\n"
+    }
+  ],
+  "sections": [
+    {
+      "id": "feature_adoption",
+      "title": "Feature adoption",
+      "writing_rules": {
+        "must_cover": [
+          "Any feature in a newly_adopted or growing state, named, with its volume",
+          "Any feature that is entitled but never used, which is an expansion opening",
+          "Any feature that has lapsed or is declining"
+        ],
+        "must_not": [
+          "Describing a feature as unavailable when is_entitled is true",
+          "Any figure that does not appear in the payload",
+          "Inventing a reason for adoption or non-adoption"
+        ],
+        "tone": "A CSM presenting to their customer. Concrete about what changed. Frame unused entitlements as available capability, not as a failure.\n",
+        "max_words": 120
+      },
+      "payload": {
+        "rows": [
+          {
+            "feature": "showNotification",
+            "adoption_state": "steady",
+            "is_entitled": true,
+            "usage_count": "15020",
+            "prior_usage_count": "14078",
+            "usage_qoq": "0.06691291376615996"
+          },
+          {
+            "feature": "setDiscount",
+            "adoption_state": "steady",
+            "is_entitled": true,
+            "usage_count": "13261",
+            "prior_usage_count": "12486",
+            "usage_qoq": "0.062069517860003205"
+          },
+          {
+            "feature": "addLoyaltyPoints",
+            "adoption_state": "steady",
+            "is_entitled": true,
+            "usage_count": "5911",
+            "prior_usage_count": "5578",
+            "usage_qoq": "0.05969881678020796"
+          },
+          {
+            "feature": "rejectCoupon",
+            "adoption_state": "growing",
+            "is_entitled": true,
+            "usage_count": "4328",
+            "prior_usage_count": "3015",
+            "usage_qoq": "0.4354892205638474"
+          },
+          {
+            "feature": "acceptCoupon",
+            "adoption_state": "steady",
+            "is_entitled": true,
+            "usage_count": "4183",
+            "prior_usage_count": "4909",
+            "usage_qoq": "-0.14789162762273375"
+          }
+        ]
+      }
+    },
+    {
+      "id": "campaign_performance",
+      "title": "Campaign performance",
+      "writing_rules": {
+        "must_cover": [
+          "The single largest quarter-over-quarter mover, named, with both values",
+          "Whether that movement concentrates in one shopper segment, using the breakdown",
+          "One forward-looking hook the CSM can open a conversation with"
+        ],
+        "must_not": [
+          "Speculating about causes that are not present in the data",
+          "Any figure that does not appear in the payload",
+          "Recommending a specific discount level or commercial term"
+        ],
+        "tone": "A CSM presenting to their customer. Factual and specific. No hype, no apology, no filler. Name campaigns by name.\n",
+        "max_words": 130
+      },
+      "payload": {
+        "rows": [
+          {
+            "campaign_name": "Winback Reactivation",
+            "campaign_type": "winback",
+            "is_paid_feature": true,
+            "redemptions": "4183",
+            "redemption_attempts": "8511",
+            "redemption_rate": "0.49148161203148866",
+            "prior_redemption_rate": "0.6195103483089349",
+            "redemption_rate_qoq": "-0.20666117463077696",
+            "discount_value": "59578.799999999996",
+            "discount_value_qoq": "-0.06409551130663908"
+          },
+          {
+            "campaign_name": "Basket Boost",
+            "campaign_type": "cart",
+            "is_paid_feature": false,
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null,
+            "discount_value": "57809.909999999996",
+            "discount_value_qoq": "0.0723620103897406"
+          },
+          {
+            "campaign_name": "Loyalty Tier Accelerator",
+            "campaign_type": "loyalty",
+            "is_paid_feature": true,
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null,
+            "discount_value": "0",
+            "discount_value_qoq": null
+          }
+        ],
+        "segment_breakdown": [
+          {
+            "campaign_name": "Winback Reactivation",
+            "profile_segment": "new",
+            "redemptions": "1702",
+            "redemption_attempts": "2872",
+            "redemption_rate": "0.5926183844011143",
+            "prior_redemption_rate": "0.626409603492179",
+            "redemption_rate_qoq": "-0.05394428645838385"
+          },
+          {
+            "campaign_name": "Winback Reactivation",
+            "profile_segment": "returning",
+            "redemptions": "1668",
+            "redemption_attempts": "4226",
+            "redemption_rate": "0.39469947941315664",
+            "prior_redemption_rate": "0.6147978642257819",
+            "redemption_rate_qoq": "-0.35800121896941894"
+          },
+          {
+            "campaign_name": "Winback Reactivation",
+            "profile_segment": "vip",
+            "redemptions": "813",
+            "redemption_attempts": "1413",
+            "redemption_rate": "0.5753715498938429",
+            "prior_redemption_rate": "0.6191626409017713",
+            "redemption_rate_qoq": "-0.0707263134354319"
+          },
+          {
+            "campaign_name": "Loyalty Tier Accelerator",
+            "profile_segment": "returning",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Basket Boost",
+            "profile_segment": "new",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Basket Boost",
+            "profile_segment": "returning",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Basket Boost",
+            "profile_segment": "vip",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Loyalty Tier Accelerator",
+            "profile_segment": "new",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          },
+          {
+            "campaign_name": "Loyalty Tier Accelerator",
+            "profile_segment": "vip",
+            "redemptions": "0",
+            "redemption_attempts": "0",
+            "redemption_rate": null,
+            "prior_redemption_rate": null,
+            "redemption_rate_qoq": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "anomalies",
+      "title": "Worth discussing",
+      "writing_rules": {
+        "must_cover": [
+          "Each ranked movement, named, with its observed value and its baseline",
+          "Why it is worth raising, in business terms rather than statistical ones",
+          "What the CSM should ask or say about it"
+        ],
+        "must_not": [
+          "Mentioning z-scores or standard deviations to the customer",
+          "Any movement not present in the ranked payload",
+          "Any figure that does not appear in the payload",
+          "Asserting a cause the data does not establish"
+        ],
+        "tone": "A CSM who has done their homework. Lead with what it means for the customer, not with how it was detected. Direct, no alarm.\n",
+        "max_words": 160
+      },
+      "payload": {
+        "ranked_movements": [
+          {
+            "metric_name": "redemption_rate",
+            "entity_type": "campaign",
+            "entity_label": "Winback Reactivation",
+            "week_start": "2026-04-06T00:00:00.000",
+            "is_paid_feature": true,
+            "affects_revenue": true,
+            "is_increase": false,
+            "z_score": "-4.058819862688996",
+            "metric_value": "0.482258064516129",
+            "baseline_mean": "0.6149750641584188",
+            "relative_change": "-0.21580874961801974",
+            "movement_magnitude": "82.2845397782197",
+            "value_weight": "0.5",
+            "volume": "620",
+            "salience": 0.3594,
+            "salience_reasons": [
+              "sits behind a paid entitlement",
+              "moving in the wrong direction"
+            ],
+            "is_deterioration": true
+          }
+        ],
+        "candidates_considered": 8,
+        "deliberately_suppressed": [
+          {
+            "entity_label": "rejectCoupon",
+            "metric_name": "effects_fired",
+            "z_score": "3.554574517435244",
+            "salience": 0.024,
+            "why": []
+          },
+          {
+            "entity_label": "setDiscount",
+            "metric_name": "effects_fired",
+            "z_score": "-2.843511155838205",
+            "salience": 0.0308,
+            "why": [
+              "moving in the wrong direction"
+            ]
+          },
+          {
+            "entity_label": "setDiscount",
+            "metric_name": "effects_fired",
+            "z_score": "2.7834496526700256",
+            "salience": 0.0347,
+            "why": []
+          },
+          {
+            "entity_label": "acceptCoupon",
+            "metric_name": "effects_fired",
+            "z_score": "-2.746499043774724",
+            "salience": 0.1033,
+            "why": [
+              "moving in the wrong direction"
+            ]
+          },
+          {
+            "entity_label": "Basket Boost",
+            "metric_name": "discount_value",
+            "z_score": "2.7184690966008684",
+            "salience": 0.0882,
+            "why": []
+          }
+        ],
+        "evidence": [
+          {
+            "source": "gong",
+            "source_id": "gong-2026-05-06-001",
+            "title": "Quarterly check-in, Acme Commerce",
+            "date": "2026-05-06",
+            "participants": [
+              "Priya Raman (Acme, Head of CRM)",
+              "Tomas Lindqvist (Acme, Growth Marketing)",
+              "account team"
+            ],
+            "snippet": "\"We cut the winback audience down to ninety days in the first week of April, and honestly we expected the redemption rate to drop. That was the trade.\"",
+            "score": 4.207,
+            "explains": {
+              "entity_label": "Winback Reactivation",
+              "metric_name": "redemption_rate"
+            },
+            "citation_id": "C1"
+          }
+        ],
+        "context_corpus": {
+          "documents_available": 6,
+          "documents_searchable": 5,
+          "withheld_internal": 1,
+          "sources": [
+            "commitment",
+            "gong",
+            "salesforce_case",
+            "salesforce_note"
+          ]
+        },
+        "context_rules": [
+          "Context explains a movement. It is never the source of a figure.",
+          "Cite evidence by its citation_id in square brackets, for example [C1].",
+          "Quote only what a snippet says, character for character. Paraphrase otherwise.",
+          "Do not cite a citation_id that is not in this payload."
+        ]
+      }
+    },
+    {
+      "id": "relationship_context",
+      "title": "Since we last spoke",
+      "writing_rules": {
+        "must_cover": [
+          "Every action agreed at the previous review, with its current status",
+          "Who owns each one that is still open"
+        ],
+        "must_not": [
+          "Any figure or date; this section is qualitative, and figures belong in the sections that queried the warehouse for them",
+          "Any commitment not present in the payload",
+          "Characterising an open action as a failure on the customer's part"
+        ],
+        "tone": "A CSM picking up a conversation, not auditing one. Brief. State what was agreed and where it stands.\n",
+        "max_words": 110
+      },
+      "payload": {
+        "rows": [],
+        "commitments": [
+          {
+            "id": "A1",
+            "text": "Review Winback Reactivation eligibility against margin before the Q2 campaign refresh.",
+            "owner": "Acme",
+            "status": "done",
+            "closed_on": "2026-04-07",
+            "note": "Eligibility narrowed from 180 to 90 days of inactivity.",
+            "source_id": "commit-2026-Q1-acme",
+            "agreed_on": "2026-03-19"
+          },
+          {
+            "id": "A2",
+            "text": "Agree a points expiry or redemption catalogue so the loyalty balance stops accruing.",
+            "owner": "Acme",
+            "status": "open",
+            "closed_on": null,
+            "note": "Raised again on the 2026-06-18 call. Still unscheduled.",
+            "source_id": "commit-2026-Q1-acme",
+            "agreed_on": "2026-03-19"
+          },
+          {
+            "id": "A3",
+            "text": "Share Basket Boost segment performance so Acme can plan Q3 budget.",
+            "owner": "account team",
+            "status": "done",
+            "closed_on": "2026-04-22",
+            "note": null,
+            "source_id": "commit-2026-Q1-acme",
+            "agreed_on": "2026-03-19"
+          }
+        ],
+        "context_corpus": {
+          "documents_available": 6,
+          "documents_searchable": 5,
+          "withheld_internal": 1,
+          "sources": [
+            "commitment",
+            "gong",
+            "salesforce_case",
+            "salesforce_note"
+          ]
+        },
+        "context_rules": [
+          "Context explains a movement. It is never the source of a figure.",
+          "Cite evidence by its citation_id in square brackets, for example [C1].",
+          "Quote only what a snippet says, character for character. Paraphrase otherwise.",
+          "Do not cite a citation_id that is not in this payload."
+        ]
+      }
+    }
+  ]
+}

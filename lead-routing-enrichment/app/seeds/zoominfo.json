@@ -1,0 +1,155 @@
+{
+  "acme-commerce.com": {
+    "person": {
+      "email": "anna.mueller@acme-commerce.com",
+      "directPhoneDialable": "+498912345678",
+      "jobTitle": "Head of CRM",
+      "linkedInUrl": "https://linkedin.com/in/anna-mueller"
+    },
+    "company": {
+      "employeeCount": 850,
+      "country": "Germany",
+      "generalEmail": "contact@acme-commerce.com"
+    },
+    "meta": {
+      "matchConfidence": 0.85,
+      "lastUpdated": "2026-07-01"
+    }
+  },
+  "shopnord.de": {
+    "person": {
+      "email": "lars@shopnord.de",
+      "directPhoneDialable": "+4630111222",
+      "jobTitle": "VP Growth",
+      "linkedInUrl": "https://linkedin.com/in/lars-nord"
+    },
+    "company": {
+      "employeeCount": 300,
+      "country": "Germany",
+      "generalEmail": "contact@shopnord.de"
+    },
+    "meta": {
+      "matchConfidence": 0.8,
+      "lastUpdated": "2026-05-11"
+    }
+  },
+  "fastcart.io": {
+    "person": {
+      "email": "mike@fastcart.io",
+      "directPhoneDialable": "030555111",
+      "jobTitle": "CTO",
+      "linkedInUrl": "https://linkedin.com/in/mike-fast"
+    },
+    "company": {
+      "employeeCount": 120,
+      "country": "United States",
+      "generalEmail": "contact@fastcart.io"
+    },
+    "meta": {
+      "matchConfidence": 0.6,
+      "lastUpdated": "2026-07-03"
+    }
+  },
+  "bahnpay.de": {
+    "person": {
+      "email": "paula@bahnpay.de",
+      "directPhoneDialable": "+4930999888",
+      "jobTitle": "Director of Growth",
+      "linkedInUrl": "https://linkedin.com/in/paula-bahn"
+    },
+    "company": {
+      "employeeCount": 240,
+      "country": "Germany",
+      "generalEmail": "contact@bahnpay.de"
+    },
+    "meta": {
+      "matchConfidence": 0.82,
+      "lastUpdated": "2026-06-21"
+    }
+  },
+  "loyalnordic.se": {
+    "person": {
+      "email": "niv.b@loyalnordic.se",
+      "directPhoneDialable": "+46812345678",
+      "jobTitle": "Head of Loyalty",
+      "linkedInUrl": "https://linkedin.com/in/niv-b"
+    },
+    "company": {
+      "employeeCount": 600,
+      "country": "Sweden",
+      "generalEmail": "contact@loyalnordic.se"
+    },
+    "meta": {
+      "matchConfidence": 0.83,
+      "lastUpdated": "2026-07-12"
+    }
+  },
+  "brightcart.io": {
+    "person": {
+      "email": "dana@brightcart.io",
+      "directPhoneDialable": "+14085551234",
+      "jobTitle": "Director of Growth",
+      "linkedInUrl": "https://linkedin.com/in/dana-bright"
+    },
+    "company": {
+      "employeeCount": 200,
+      "country": "United States",
+      "generalEmail": "contact@brightcart.io"
+    },
+    "meta": {
+      "matchConfidence": 0.74,
+      "lastUpdated": "2026-08-05"
+    }
+  },
+  "shopwave.de": {
+    "person": {
+      "email": "jonas@shopwave.de",
+      "directPhoneDialable": "+4915112345678",
+      "jobTitle": "VP Growth",
+      "linkedInUrl": "https://linkedin.com/in/jonas-wave"
+    },
+    "company": {
+      "employeeCount": 90,
+      "country": "Germany",
+      "generalEmail": "contact@shopwave.de"
+    },
+    "meta": {
+      "matchConfidence": 0.8,
+      "lastUpdated": "2026-08-06"
+    }
+  },
+  "nordicliving.se": {
+    "person": {
+      "email": "sara@nordicliving.se",
+      "directPhoneDialable": "+46855512345",
+      "jobTitle": "Head of CRM",
+      "linkedInUrl": "https://linkedin.com/in/sara-living"
+    },
+    "company": {
+      "employeeCount": 150,
+      "country": "Sweden",
+      "generalEmail": "contact@nordicliving.se"
+    },
+    "meta": {
+      "matchConfidence": 0.84,
+      "lastUpdated": "2026-08-13"
+    }
+  },
+  "altbau-grocers.de": {
+    "person": {
+      "email": "mara@altbau-grocers.de",
+      "directPhoneDialable": "+493055512345",
+      "jobTitle": "Head of Ecommerce",
+      "linkedInUrl": "https://linkedin.com/in/mara-altbau"
+    },
+    "company": {
+      "employeeCount": 45,
+      "country": "Germany",
+      "generalEmail": "contact@altbau-grocers.de"
+    },
+    "meta": {
+      "matchConfidence": 0.79,
+      "lastUpdated": "2026-08-14"
+    }
+  }
+}

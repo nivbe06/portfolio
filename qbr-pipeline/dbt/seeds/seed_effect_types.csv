@@ -1,0 +1,6 @@
+effect_type,is_monetary,value_weight
+setDiscount,True,1.0
+acceptCoupon,True,0.9
+rejectCoupon,False,0.2
+addLoyaltyPoints,True,0.7
+showNotification,False,0.05

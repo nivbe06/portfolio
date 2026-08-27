@@ -1,0 +1,11 @@
+{
+  "shopnord.de": {
+    "organization": {
+      "name": "ShopNord",
+      "categories": ["SaaS"],
+      "fundingStage": "Series A",
+      "fundingTotal": {"valueUsd": 12000000, "currency": "USD"}
+    },
+    "meta": {"confidence": 0.80, "as_of": "2026-04-01"}
+  }
+}

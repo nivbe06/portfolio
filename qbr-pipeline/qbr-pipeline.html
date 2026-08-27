@@ -1,0 +1,748 @@
+<title>Session Logs to QBR Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --bg:        #F4F6F8;
+    --surface:   #FFFFFF;
+    --surface-2: #EAEEF2;
+    --ink:       #101720;
+    --ink-2:     #47535F;
+    --ink-3:     #77838F;
+    --rule:      #D3DAE1;
+    --rule-soft: #E3E8ED;
+
+    --det:       #0E6F62;   /* deterministic: SQL, warehouse, verified */
+    --det-tint:  #E2EFEC;
+    --gen:       #9C5A0C;   /* generative: LLM, probabilistic */
+    --gen-tint:  #F6EDE1;
+    --no:        #A8323F;   /* the path we refuse */
+    --no-tint:   #F6E5E7;
+
+    --band-1:    #EDF1F4;
+    --band-2:    #E6EEEC;
+    --band-3:    #E8ECEF;
+    --band-4:    #F3EDE5;
+    --band-5:    #EDF1F4;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:        #0D1218;
+      --surface:   #141B23;
+      --surface-2: #1B242E;
+      --ink:       #E8EDF2;
+      --ink-2:     #A4B0BC;
+      --ink-3:     #74818E;
+      --rule:      #2A3540;
+      --rule-soft: #212B35;
+
+      --det:       #4FC4AE;
+      --det-tint:  #14312C;
+      --gen:       #E0A45C;
+      --gen-tint:  #33240F;
+      --no:        #E0707E;
+      --no-tint:   #351A1E;
+
+      --band-1:    #131A21;
+      --band-2:    #12211F;
+      --band-3:    #141B23;
+      --band-4:    #1F1913;
+      --band-5:    #131A21;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg:        #0D1218;
+    --surface:   #141B23;
+    --surface-2: #1B242E;
+    --ink:       #E8EDF2;
+    --ink-2:     #A4B0BC;
+    --ink-3:     #74818E;
+    --rule:      #2A3540;
+    --rule-soft: #212B35;
+
+    --det:       #4FC4AE;
+    --det-tint:  #14312C;
+    --gen:       #E0A45C;
+    --gen-tint:  #33240F;
+    --no:        #E0707E;
+    --no-tint:   #351A1E;
+
+    --band-1:    #131A21;
+    --band-2:    #12211F;
+    --band-3:    #141B23;
+    --band-4:    #1F1913;
+    --band-5:    #131A21;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  /* ---- header ---- */
+  header { display: flex; flex-direction: column; gap: 18px; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(30px, 4.6vw, 46px);
+    line-height: 1.08;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  .thesis {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+  .thesis strong { color: var(--ink); font-weight: 600; }
+
+  /* ---- sections ---- */
+  section { display: flex; flex-direction: column; gap: 20px; }
+
+  h2 {
+    margin: 0;
+    font-size: 13px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  p { margin: 0; max-width: 68ch; color: var(--ink-2); }
+  p strong { color: var(--ink); font-weight: 600; }
+
+  code, .mono {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.9em;
+  }
+  code {
+    background: var(--surface-2);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  /* ---- figures ---- */
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 22px 22px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-x: auto;
+  }
+  figure svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  figcaption {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-3);
+    max-width: 76ch;
+    border-top: 1px solid var(--rule-soft);
+    padding-top: 12px;
+  }
+  figcaption b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---- cards ---- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 14px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .card.no    { border-left: 3px solid var(--no); }
+  .card.det   { border-left: 3px solid var(--det); }
+  .card.gen   { border-left: 3px solid var(--gen); }
+
+  .card h3 {
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .card p { font-size: 13.5px; line-height: 1.5; max-width: none; }
+
+  .tag {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .tag.no  { color: var(--no); }
+  .tag.det { color: var(--det); }
+  .tag.gen { color: var(--gen); }
+
+  /* ---- table ---- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14px; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    background: var(--surface-2);
+    white-space: nowrap;
+  }
+  td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  td { color: var(--ink-2); }
+  td.num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); }
+
+  /* ---- callout ---- */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--det);
+    border-radius: 4px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .callout .big {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 27px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--det);
+    line-height: 1.1;
+  }
+  .callout p { font-size: 14px; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  footer p { font-size: 13.5px; color: var(--ink-3); }
+
+  a { color: var(--det); }
+  a:focus-visible, :focus-visible { outline: 2px solid var(--det); outline-offset: 2px; }
+
+  @media (max-width: 620px) {
+    .wrap { padding: 36px 18px 64px; gap: 44px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Talon.One &middot; GTM AI Engineer &middot; Take-home task 2</div>
+    <h1>Session Logs to QBR Insights</h1>
+    <p class="thesis">
+      Gigabytes of session and integration logs, per customer, per month, turned into a quarterly business review
+      a CSM can present without editing. The design rule underneath everything below:
+      <strong>the warehouse does the reduction, the LLM does the language.</strong>
+      Every number a customer sees is computed in SQL. The model never counts, never aggregates, never detects.
+    </p>
+  </header>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>1 &nbsp;/&nbsp; Why the naive path is not a near miss</h2>
+    <p>
+      "Send the logs to an LLM" is not expensive, it is arithmetically impossible. Worth drawing once,
+      because it sets the size of the reduction the rest of the system has to achieve.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 900 220" role="img"
+           aria-label="Raw logs cannot be sent to an LLM: 5 gigabytes is roughly 1.25 billion tokens, about 1,250 times a 1 million token context window, and roughly 3,750 dollars per account per month.">
+        <defs>
+          <marker id="a-no" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <polygon points="0,0 9,4 0,8" fill="var(--no)"/>
+          </marker>
+        </defs>
+
+        <!-- source box -->
+        <rect x="20" y="58" width="230" height="86" rx="3" fill="var(--surface-2)" stroke="var(--rule)"/>
+        <text x="40" y="88" font-size="14" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Raw session logs</text>
+        <text x="40" y="110" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">1 account, 1 month</text>
+        <text x="40" y="129" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">~5 GB &middot; ~20M events</text>
+
+        <!-- refused arrow -->
+        <line x1="258" y1="101" x2="620" y2="101" stroke="var(--no)" stroke-width="1.6"
+              stroke-dasharray="7 5" marker-end="url(#a-no)"/>
+        <!-- the X -->
+        <circle cx="439" cy="101" r="17" fill="var(--no-tint)" stroke="var(--no)" stroke-width="1.4"/>
+        <line x1="431" y1="93" x2="447" y2="109" stroke="var(--no)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="447" y1="93" x2="431" y2="109" stroke="var(--no)" stroke-width="2" stroke-linecap="round"/>
+
+        <text x="439" y="59" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--no)" font-family="IBM Plex Mono, monospace">~1.25 BILLION TOKENS</text>
+        <text x="439" y="151" text-anchor="middle" font-size="11.5" fill="var(--no)" font-family="IBM Plex Sans, sans-serif">1,250&times; a 1M context window</text>
+        <text x="439" y="169" text-anchor="middle" font-size="11.5" fill="var(--no)" font-family="IBM Plex Sans, sans-serif">~$3,750 / account / month, if it fit</text>
+
+        <!-- target box -->
+        <rect x="632" y="58" width="248" height="86" rx="3" fill="var(--gen-tint)" stroke="var(--gen)" stroke-width="1.2"/>
+        <text x="652" y="88" font-size="14" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">LLM</text>
+        <text x="652" y="110" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">1M token context window</text>
+        <text x="652" y="129" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">Cannot receive this input</text>
+      </svg>
+      <figcaption>
+        <b>Estimate basis:</b> ~4 bytes per token on structured JSON; Claude Sonnet 5 input pricing of $3 per million tokens.
+        The gap is six orders of magnitude, so no amount of chunking, sampling, or a bigger context window closes it.
+        The reduction is the system. <b>This figure sizes the brief's stated 5 GB month</b>; the funnel below is
+        measured against a smaller working build, and the ratios there are real counts.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>2 &nbsp;/&nbsp; The reduction funnel</h2>
+    <p>
+      Six stages, each cheaper to scan than the last, except one that deliberately holds flat.
+      Every stage is ordinary warehouse work, which is exactly why it scales: this is what SQL engines
+      are built for and what LLMs are not. <strong>These figures are measured, not estimated</strong>,
+      counted from a working implementation that generates 2.18 million events across four accounts
+      and six quarters.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 900 376" role="img"
+           aria-label="Measured reduction funnel across six stages, log scale: 2.18 million raw events down to a 2,153 token payload, a reduction of about forty-six thousand times. The int_ layer holds volume flat because it is a logic layer, not a reduction layer.">
+        <!-- header -->
+        <text x="24" y="26" font-size="10.5" font-weight="600" letter-spacing="1.1" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">STAGE</text>
+        <text x="876" y="26" text-anchor="end" font-size="10.5" font-weight="600" letter-spacing="1.1" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">CUMULATIVE REDUCTION</text>
+        <line x1="24" y1="38" x2="876" y2="38" stroke="var(--rule)"/>
+
+        <!-- row 1 -->
+        <text x="24" y="70" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">raw</text>
+        <text x="24" y="87" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">gzipped JSON in object store</text>
+        <rect x="228" y="54" width="466" height="30" rx="2" fill="var(--det)" opacity="0.9"/>
+        <text x="242" y="74" font-size="12" font-weight="600" fill="var(--bg)" font-family="IBM Plex Mono, monospace">400 MB &middot; 2.18M events</text>
+        <text x="876" y="74" text-anchor="end" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">1&times;</text>
+
+        <!-- row 2 -->
+        <text x="24" y="126" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">stg_</text>
+        <text x="24" y="143" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">typed, deduped, Parquet</text>
+        <rect x="228" y="110" width="352" height="30" rx="2" fill="var(--det)" opacity="0.8"/>
+        <text x="242" y="130" font-size="12" font-weight="600" fill="var(--bg)" font-family="IBM Plex Mono, monospace">same rows</text>
+        <text x="876" y="130" text-anchor="end" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">~7&times;</text>
+
+        <!-- row 3: int_ deliberately flat, drawn as an outline to mark it as non-materialised -->
+        <text x="24" y="182" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">int_</text>
+        <text x="24" y="199" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">lineage + joins, ephemeral</text>
+        <rect x="228" y="166" width="344" height="30" rx="2" fill="none" stroke="var(--det)" stroke-width="1.3" stroke-dasharray="5 4"/>
+        <text x="242" y="186" font-size="12" font-weight="600" fill="var(--det)" font-family="IBM Plex Mono, monospace">same rows</text>
+        <text x="588" y="186" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">logic layer, not a reduction layer</text>
+        <text x="876" y="186" text-anchor="end" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">~7&times;</text>
+
+        <!-- row 4 -->
+        <text x="24" y="238" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">dim_ / fct_</text>
+        <text x="24" y="255" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">daily grain, incremental</text>
+        <rect x="228" y="222" width="238" height="30" rx="2" fill="var(--det)" opacity="0.66"/>
+        <text x="242" y="242" font-size="12" font-weight="600" fill="var(--bg)" font-family="IBM Plex Mono, monospace">49,523 rows</text>
+        <text x="876" y="242" text-anchor="end" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">44&times;</text>
+
+        <!-- row 5 -->
+        <text x="24" y="294" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">rpt_</text>
+        <text x="24" y="311" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">QBR grain, one quarter</text>
+        <rect x="228" y="278" width="124" height="30" rx="2" fill="var(--det)" opacity="0.54"/>
+        <text x="242" y="298" font-size="12" font-weight="600" fill="var(--bg)" font-family="IBM Plex Mono, monospace">499 rows &middot; 48 KB</text>
+        <text x="876" y="298" text-anchor="end" font-size="12" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">4,379&times;</text>
+
+        <!-- row 6 -->
+        <text x="24" y="350" font-size="13" font-weight="600" fill="var(--gen)" font-family="IBM Plex Mono, monospace">llm payload</text>
+        <text x="24" y="367" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">top-N ranked, structured</text>
+        <rect x="228" y="334" width="52" height="30" rx="2" fill="var(--gen)"/>
+        <text x="292" y="354" font-size="12" font-weight="600" fill="var(--gen)" font-family="IBM Plex Mono, monospace">~2,153 tokens</text>
+        <text x="876" y="354" text-anchor="end" font-size="12" font-weight="600" fill="var(--gen)" font-family="IBM Plex Mono, monospace">~46,000&times;</text>
+      </svg>
+      <figcaption>
+        Bar widths are log-scaled, so the visible taper understates the real collapse.
+        <b>Green is deterministic</b>, computed and reproducible; <b>amber is the only data an LLM ever sees</b>.
+        <b>The dashed <span class="mono">int_</span> bar is flat on purpose:</b> it resolves lineage and joins, materialised as
+        ephemeral models, so it costs no storage and moves no volume. Format compaction happens above it, grain
+        collapse below it. Keeping those two concerns apart is what makes the aggregation logic testable.
+      </figcaption>
+    </figure>
+
+    <div class="callout">
+      <div class="big">~46,000&times;</div>
+      <p>
+        Roughly 100 million tokens of raw log become a 2,153-token payload for a complete three-section QBR.
+        At frontier-model pricing that is a few cents per account per quarter. <strong>The LLM is a rounding
+        error; warehouse compute is the real cost line.</strong> That is the argument for putting the reduction
+        first, not a side effect of it. In the implementation the ratio is enforced by a dbt test, so the funnel
+        is an invariant rather than a slide.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>3 &nbsp;/&nbsp; Architecture</h2>
+    <p>
+      Read top to bottom. The band a component sits in decides what it is allowed to do:
+      everything above the semantic layer is deterministic SQL, everything below it is generated language,
+      and the semantic layer is the membrane that neither side crosses uninvited.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 960 924" role="img"
+           aria-label="Architecture: object storage feeds a dbt DAG of staging, intermediate, fact and report models in the warehouse; a salience ranker selects the top anomalies; a semantic layer compiles metric queries under read-only tenant-scoped access; the LLM selects sections and writes narrative; a grounding check validates every figure before the QBR pack reaches the CSM.">
+        <defs>
+          <marker id="a-det" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <polygon points="0,0 9,4 0,8" fill="var(--det)"/>
+          </marker>
+          <marker id="a-gen" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <polygon points="0,0 9,4 0,8" fill="var(--gen)"/>
+          </marker>
+          <marker id="a-rej" markerWidth="9" markerHeight="9" refX="7.5" refY="4" orient="auto">
+            <polygon points="0,0 9,4 0,8" fill="var(--no)"/>
+          </marker>
+        </defs>
+
+        <!-- ===== bands ===== -->
+        <rect x="8"  y="16"  width="944" height="104" rx="3" fill="var(--band-1)"/>
+        <rect x="8"  y="130" width="944" height="352" rx="3" fill="var(--band-2)"/>
+        <rect x="8"  y="492" width="944" height="116" rx="3" fill="var(--band-3)"/>
+        <rect x="8"  y="618" width="944" height="164" rx="3" fill="var(--band-4)"/>
+        <rect x="8"  y="792" width="944" height="118" rx="3" fill="var(--band-5)"/>
+
+        <text x="26" y="38"  font-size="10" font-weight="600" letter-spacing="1.2" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">LANDING</text>
+        <text x="26" y="152" font-size="10" font-weight="600" letter-spacing="1.2" fill="var(--det)"   font-family="IBM Plex Mono, monospace">WAREHOUSE &middot; DETERMINISTIC</text>
+        <text x="26" y="514" font-size="10" font-weight="600" letter-spacing="1.2" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">CONTRACT</text>
+        <text x="130" y="640" font-size="10" font-weight="600" letter-spacing="1.2" fill="var(--gen)"   font-family="IBM Plex Mono, monospace">GENERATIVE</text>
+        <text x="130" y="814" font-size="10" font-weight="600" letter-spacing="1.2" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">CSM-FACING</text>
+
+        <!-- ===== landing ===== -->
+        <rect x="240" y="46" width="420" height="56" rx="3" fill="var(--surface)" stroke="var(--rule)"/>
+        <text x="258" y="70" font-size="13.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Object store &middot; append-only</text>
+        <text x="258" y="90" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">JSON compacted to Parquet, partitioned date / tenant</text>
+        <text x="644" y="70" text-anchor="end" font-size="11.5" font-weight="600" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">5 GB</text>
+
+        <line x1="450" y1="102" x2="450" y2="166" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+        <text x="462" y="128" font-size="11" fill="var(--det)" font-family="IBM Plex Sans, sans-serif">nightly batch load</text>
+
+        <!-- ===== warehouse: stg ===== -->
+        <rect x="240" y="172" width="420" height="48" rx="3" fill="var(--surface)" stroke="var(--rule)"/>
+        <text x="258" y="192" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">stg_</text>
+        <text x="258" y="210" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">typed, deduped, one row per raw event</text>
+        <text x="644" y="192" text-anchor="end" font-size="11.5" font-weight="600" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">700 MB</text>
+
+        <line x1="450" y1="220" x2="450" y2="248" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+
+        <!-- int -->
+        <rect x="240" y="254" width="420" height="48" rx="3" fill="var(--surface)" stroke="var(--rule)"/>
+        <text x="258" y="274" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">int_</text>
+        <text x="258" y="292" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">session &rarr; campaign &rarr; ruleset &rarr; effect lineage</text>
+        <text x="644" y="274" text-anchor="end" font-size="11.5" font-weight="600" fill="var(--ink-3)" font-family="IBM Plex Mono, monospace">ephemeral</text>
+
+        <line x1="450" y1="302" x2="450" y2="330" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+
+        <!-- fct -->
+        <rect x="240" y="336" width="420" height="60" rx="3" fill="var(--surface)" stroke="var(--rule)"/>
+        <text x="258" y="356" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">dim_ / fct_</text>
+        <text x="258" y="374" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">fct_session_evaluations &middot; fct_effects_fired</text>
+        <text x="258" y="389" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">fct_coupon_redemptions &middot; fct_loyalty_events</text>
+        <text x="644" y="356" text-anchor="end" font-size="11.5" font-weight="600" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">500k rows</text>
+
+        <line x1="450" y1="396" x2="450" y2="424" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+
+        <!-- rpt -->
+        <rect x="240" y="430" width="420" height="48" rx="3" fill="var(--surface)" stroke="var(--det)" stroke-width="1.3"/>
+        <text x="258" y="450" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">rpt_</text>
+        <text x="258" y="468" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">QBR grain, PoP deltas, anomaly flags (z-score)</text>
+        <text x="644" y="450" text-anchor="end" font-size="11.5" font-weight="600" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">2k rows</text>
+
+        <line x1="450" y1="478" x2="450" y2="518" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+
+        <!-- ===== semantic layer (membrane) ===== -->
+        <rect x="140" y="524" width="620" height="68" rx="3" fill="var(--surface)" stroke="var(--ink-2)" stroke-width="1.4"/>
+        <text x="158" y="546" font-size="13.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Semantic layer &middot; Cube.dev</text>
+        <text x="158" y="564" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">every metric defined once: name, calculation, grain, valid dimensions</text>
+        <text x="158" y="582" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">read-only, tenant-scoped at row level &mdash; the LLM queries metrics, never tables</text>
+
+        <!-- salience ranker feeds the membrane from the side -->
+        <rect x="700" y="430" width="240" height="48" rx="3" fill="var(--surface)" stroke="var(--det)" stroke-width="1.3"/>
+        <text x="716" y="450" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Salience ranker</text>
+        <text x="716" y="468" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">40 flags &rarr; top 5 by materiality</text>
+        <line x1="660" y1="454" x2="694" y2="454" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+        <path d="M 820 478 L 820 558 L 766 558" fill="none" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+
+        <line x1="450" y1="592" x2="450" y2="660" stroke="var(--gen)" stroke-width="1.5" marker-end="url(#a-gen)"/>
+        <text x="462" y="616" font-size="11" fill="var(--gen)" font-family="IBM Plex Sans, sans-serif">compiled SQL runs; result returns as</text>
+        <text x="462" y="632" font-size="11" fill="var(--gen)" font-family="IBM Plex Sans, sans-serif">structured JSON, ~15k tokens</text>
+
+        <!-- ===== generative ===== -->
+        <rect x="240" y="666" width="200" height="58" rx="3" fill="var(--surface)" stroke="var(--gen)" stroke-width="1.3"/>
+        <text x="256" y="687" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Section selection</text>
+        <text x="256" y="704" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">from a fixed registry</text>
+        <text x="256" y="718" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">of QBR bundles</text>
+
+        <rect x="460" y="666" width="200" height="58" rx="3" fill="var(--surface)" stroke="var(--gen)" stroke-width="1.3"/>
+        <text x="476" y="687" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Narrative generation</text>
+        <text x="476" y="704" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">numbers in, sentences out,</text>
+        <text x="476" y="718" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">no arithmetic</text>
+
+        <line x1="440" y1="695" x2="454" y2="695" stroke="var(--gen)" stroke-width="1.5" marker-end="url(#a-gen)"/>
+
+        <!-- grounding check -->
+        <rect x="700" y="666" width="240" height="58" rx="3" fill="var(--surface)" stroke="var(--no)" stroke-width="1.4"/>
+        <text x="716" y="687" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Grounding check</text>
+        <text x="716" y="704" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">every figure in the draft must</text>
+        <text x="716" y="718" font-size="11" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">exist in the input payload</text>
+        <line x1="660" y1="695" x2="694" y2="695" stroke="var(--gen)" stroke-width="1.5" marker-end="url(#a-gen)"/>
+
+        <!-- reject loop back to narrative generation -->
+        <path d="M 800 724 L 800 742 L 560 742 L 560 730" fill="none" stroke="var(--no)" stroke-width="1.4"
+              stroke-dasharray="6 4" marker-end="url(#a-rej)"/>
+        <text x="690" y="760" text-anchor="middle" font-size="11" fill="var(--no)" font-family="IBM Plex Sans, sans-serif">figure not found in payload &rarr; reject, regenerate</text>
+
+        <!-- validated path down to the CSM -->
+        <path d="M 866 724 L 866 770 L 450 770 L 450 824" fill="none" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+        <text x="438" y="794" text-anchor="end" font-size="11" fill="var(--det)" font-family="IBM Plex Sans, sans-serif">validated pack, generated on demand</text>
+        <text x="438" y="810" text-anchor="end" font-size="11" fill="var(--det)" font-family="IBM Plex Sans, sans-serif">with figures current as at the review</text>
+
+        <!-- ===== output ===== -->
+        <rect x="140" y="830" width="300" height="58" rx="3" fill="var(--surface)" stroke="var(--rule)"/>
+        <text x="158" y="852" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">QBR wizard</text>
+        <text x="158" y="870" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">review, adjust scope, ask follow-ups</text>
+
+        <rect x="470" y="830" width="290" height="58" rx="3" fill="var(--surface)" stroke="var(--rule)"/>
+        <text x="488" y="852" font-size="13" font-weight="600" fill="var(--ink)" font-family="IBM Plex Sans, sans-serif">Export</text>
+        <text x="488" y="870" font-size="11.5" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">templated deck or PDF, presentable as-is</text>
+
+        <line x1="440" y1="859" x2="464" y2="859" stroke="var(--det)" stroke-width="1.5" marker-end="url(#a-det)"/>
+
+        <!-- follow-up loop back into the semantic layer -->
+        <path d="M 140 859 L 104 859 L 104 558 L 134 558" fill="none" stroke="var(--gen)" stroke-width="1.4"
+              stroke-dasharray="6 4" marker-end="url(#a-gen)"/>
+        <text x="88" y="716" text-anchor="middle" font-size="10.5" fill="var(--gen)" font-family="IBM Plex Sans, sans-serif" transform="rotate(-90 88 716)">follow-up re-queries the semantic layer</text>
+
+        <!-- annotations -->
+        <text x="700" y="200" font-size="11" font-weight="600" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">Nightly batch, no streaming.</text>
+        <text x="700" y="216" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">A QBR is quarterly. Real-time infra</text>
+        <text x="700" y="231" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">would be spend without a problem.</text>
+
+        <text x="700" y="286" font-size="11" font-weight="600" fill="var(--ink-2)" font-family="IBM Plex Sans, sans-serif">All fct_ models incremental.</text>
+        <text x="700" y="302" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">Nightly full refresh is not</text>
+        <text x="700" y="317" font-size="11" fill="var(--ink-3)" font-family="IBM Plex Sans, sans-serif">affordable at this volume.</text>
+
+      </svg>
+      <figcaption>
+        <b>Solid arrows are data flow; dashed arrows are control loops.</b>
+        Green marks deterministic paths, amber marks generated ones, red marks the rejection path.
+        The salience ranker sits deliberately <i>before</i> the membrane: choosing what matters is a business-rules
+        problem, not a language problem.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>4 &nbsp;/&nbsp; Where the LLM does not go, and why</h2>
+    <p>
+      The interesting half of the design is the exclusions. Each of these is something an LLM
+      <em>could</em> do and shouldn't, because a deterministic component does it better, cheaper, or verifiably.
+    </p>
+
+    <div class="cards">
+      <div class="card no">
+        <span class="tag no">Excluded</span>
+        <h3>Anomaly detection</h3>
+        <p>Rolling z-score, threshold rules and dbt tests in <code>rpt_</code>. Cheap, auditable, reproducible across
+           20M events. A model scanning for anomalies is the non-deterministic, unverifiable version of a solved problem.</p>
+      </div>
+      <div class="card no">
+        <span class="tag no">Excluded</span>
+        <h3>Any arithmetic</h3>
+        <p>No counting, no aggregation, no percentage. The model is handed finished numbers and asked for sentences.
+           It cannot invent a figure because it is never asked to produce one.</p>
+      </div>
+      <div class="card no">
+        <span class="tag no">Excluded</span>
+        <h3>Free SQL on production</h3>
+        <p>Text-to-SQL is the least reliable component in a system this shape, so it gets the smallest possible
+           surface: metric queries against the semantic layer only, read-only, tenant-scoped.</p>
+      </div>
+      <div class="card no">
+        <span class="tag no">Excluded</span>
+        <h3>Deciding what matters</h3>
+        <p>Materiality is business logic with a known weighting: revenue impact, contracted goals, paid-feature
+           adoption. Ranked in SQL before the model sees anything.</p>
+      </div>
+      <div class="card gen">
+        <span class="tag gen">Included</span>
+        <h3>Section selection</h3>
+        <p>The wizard is deterministic by default: the CSM sets account, period and segment as parameters. The model
+           picks from a fixed registry of QBR bundles. Free-form natural language is the escape hatch, not the main path.</p>
+      </div>
+      <div class="card gen">
+        <span class="tag gen">Included</span>
+        <h3>Narrative</h3>
+        <p>"Coupon redemption on the Q3 winback campaign fell 22% against Q2, concentrated in Enterprise, while
+           session volume grew 8%" is presentable. A table of numbers is not. This is the one thing only a model does well.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>5 &nbsp;/&nbsp; Two things that make it defensible</h2>
+    <div class="cards">
+      <div class="card det">
+        <span class="tag det">Guardrail</span>
+        <h3>Salience ranking</h3>
+        <p>The brief asks for anomalies <em>worth discussing with the customer</em>. A z-score returns roughly 40 flags
+           a quarter and most are noise. Ranking by business materiality cuts that to three or five before generation.
+           Statistically significant and worth ninety seconds of a QBR are different tests.</p>
+      </div>
+      <div class="card det">
+        <span class="tag det">Guardrail</span>
+        <h3>Grounding check</h3>
+        <p>A deterministic post-check extracts every figure from the generated narrative and asserts it exists in the
+           structured input. Anything unmatched is rejected and regenerated. Hallucinated numbers in front of a customer
+           is the failure mode that ends the product, so it gets a hard gate rather than a prompt instruction.</p>
+      </div>
+      <div class="card det">
+        <span class="tag det">Property</span>
+        <h3>The pipeline is also a PII firewall</h3>
+        <p>Raw logs carry profile attributes, identifiers and cart contents. By <code>rpt_</code> the data is aggregate
+           and carries no individual identity, so nothing personal ever reaches the model. A GDPR-relevant property
+           that falls out of the architecture for free, which matters for EU enterprise accounts.</p>
+      </div>
+      <div class="card det">
+        <span class="tag det">Loop</span>
+        <h3>CSM edits are the quality signal</h3>
+        <p>Packs are generated on demand, so the figures are current as at the review rather than as at a batch job
+           that ran weeks earlier. A human still reviews before a customer sees it; the wizard is an edit surface
+           rather than a generate-and-hope one. Captured edits are the cheapest available evaluation data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>6 &nbsp;/&nbsp; Layer responsibilities</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Component</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Storage</td><td>Object store</td><td>Append-only landing, JSON to Parquet compaction, hot 90 days / cold tiering</td></tr>
+          <tr><td>Storage</td><td>Warehouse</td><td><span class="mono">stg_</span> through <span class="mono">rpt_</span>, dbt-managed, incremental</td></tr>
+          <tr><td>Processing</td><td><span class="mono">stg_</span></td><td>Typing, dedupe, format compaction &mdash; one row per raw event</td></tr>
+          <tr><td>Processing</td><td><span class="mono">int_</span></td><td>Session to campaign to ruleset to effect lineage. Ephemeral, no storage cost, no volume change</td></tr>
+          <tr><td>Processing</td><td><span class="mono">dim_</span> / <span class="mono">fct_</span></td><td>Grain collapse to daily facts, incremental materialisation</td></tr>
+          <tr><td>Processing</td><td><span class="mono">rpt_</span></td><td>QBR grain, period-over-period deltas, anomaly flags, dbt tests</td></tr>
+          <tr><td>Processing</td><td>Salience ranker</td><td>Anomaly materiality weighting, top-N selection</td></tr>
+          <tr><td>Contract</td><td>Semantic layer (Cube)</td><td>Metric definitions, query compilation, tenant-scoped access boundary enforced by <span class="mono">query_rewrite</span></td></tr>
+          <tr><td>AI</td><td>LLM</td><td>Section selection, narrative generation, follow-up interpretation</td></tr>
+          <tr><td>Guardrail</td><td>Grounding check</td><td>Validates every figure in output against structured input</td></tr>
+          <tr><td>Output</td><td>QBR wizard</td><td>Scoping, review, edit, follow-up</td></tr>
+          <tr><td>Output</td><td>Export</td><td>Narrative and charts to deck or PDF</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <!-- ============================================================ -->
+  <section>
+    <h2>7 &nbsp;/&nbsp; It runs</h2>
+    <p>
+      This is not only a design. The pipeline above is implemented and every number on this page
+      is measured from it: a generator producing 2.18 million Talon.One-shaped events across four
+      accounts and six quarters, a dbt DuckDB DAG of 22 models and 65 tests, a self-hosted Cube
+      semantic layer, and a <code>/create-qbr</code> skill that produces the pack.
+    </p>
+
+    <div class="cards">
+      <div class="card det">
+        <span class="tag det">Enforced</span>
+        <h3>The PII firewall is a test</h3>
+        <p><code>assert_no_pii_in_rpt.sql</code> inspects the published layer's actual columns and fails
+           the build if any personal identifier reaches it. The claim cannot quietly stop being true.</p>
+      </div>
+      <div class="card det">
+        <span class="tag det">Enforced</span>
+        <h3>The funnel is a test</h3>
+        <p><code>assert_reduction_ratio.sql</code> fails if the published layer outgrows its row budget.
+           If the reduction stops holding, the build breaks rather than the assumption.</p>
+      </div>
+      <div class="card det">
+        <span class="tag det">Enforced</span>
+        <h3>The tenant boundary is code</h3>
+        <p>Every base cube is <code>public: false</code> and <code>query_rewrite</code> appends a tenant
+           filter from the caller's signed token before planning. Four checks prove it: a base cube
+           refused, a cross-account query returning nothing, an unsigned token rejected.</p>
+      </div>
+      <div class="card gen">
+        <span class="tag gen">Measured</span>
+        <h3>The ranker earns its place</h3>
+        <p>For one account the ranker received eight flagged movements. A notification-volume change at
+           <span class="mono">z&nbsp;=&nbsp;+3.6</span> was dropped; a coupon redemption collapse at
+           <span class="mono">z&nbsp;=&nbsp;&minus;3.6</span> surfaced. Identical statistical significance,
+           opposite decisions, because only one of them costs the customer money.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="eyebrow">AI tool usage disclosure</div>
+    <p>
+      I used Claude, via Claude Code, as a critic rather than an author. The architecture is mine from prior hands-on
+      dbt and warehouse work: medallion DAG, semantic layer as the contract between data and AI, model confined to
+      language. Claude's contribution was adversarial review. It pushed me to quantify the reduction funnel instead of
+      asserting it, flagged that my first draft let the model compose queries too freely, and prompted the
+      salience-ranking and grounding-check additions. I also used it to draft this page from my notes. Every decision
+      here I can defend and would make again without it.
+    </p>
+  </footer>
+
+</div>

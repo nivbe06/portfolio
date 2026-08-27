@@ -1,0 +1,187 @@
+{
+  "context": {
+    "tenant_id": "brightline-grocers",
+    "tenant_name": "Brightline Grocers",
+    "plan_tier": "Mid-Market",
+    "country": "GB",
+    "currency": "GBP",
+    "quarter": "2026-Q2",
+    "prior_quarter": "2026-Q1",
+    "has_loyalty": false,
+    "sessions_evaluated": "24222",
+    "cart_value": "1132603.23",
+    "sessions_qoq": "0.0686962276637988",
+    "api_error_rate": "0.004760960126958937",
+    "net_points_outstanding": "0"
+  },
+  "sections": [
+    {
+      "id": "feature_adoption",
+      "title": "Feature adoption",
+      "narrative": "Notification usage is the standout this quarter. showNotification fired 12,722 times, up from 6,167, more than doubling quarter on quarter. setDiscount stayed steady, 3,507 uses against 3,225 prior, a modest 8.7% rise.\n\nTwo entitled capabilities sit unused: acceptCoupon and rejectCoupon have never fired despite being included on the plan. Both are available capability today, not a gap to close urgently, but worth a conversation if coupon-based promotions are on the roadmap.",
+      "grounded": true,
+      "figures_checked": 5,
+      "unverified": [],
+      "evidence": [],
+      "context_grounded": true,
+      "quotes_checked": 0,
+      "citations_used": [],
+      "unresolved_citations": [],
+      "unverified_quotes": [],
+      "figures": [
+        "<figure class=\"fig\"><figcaption class=\"fig-t\">Feature usage by quarter</figcaption><svg viewBox=\"0 0 760 260\" role=\"img\" aria-label=\"Feature usage by quarter\" class=\"chart\"><line x1=\"56\" y1=\"226.0\" x2=\"630\" y2=\"226.0\" class=\"grid\"/><text x=\"48\" y=\"230.0\" class=\"c-ax\" text-anchor=\"end\">0</text><line x1=\"56\" y1=\"122.0\" x2=\"630\" y2=\"122.0\" class=\"grid\"/><text x=\"48\" y=\"126.0\" class=\"c-ax\" text-anchor=\"end\">6,361</text><line x1=\"56\" y1=\"18.0\" x2=\"630\" y2=\"18.0\" class=\"grid\"/><text x=\"48\" y=\"22.0\" class=\"c-ax\" text-anchor=\"end\">12,722</text><text x=\"56.0\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q1</text><text x=\"170.8\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q2</text><text x=\"285.6\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q3</text><text x=\"400.4\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2025-Q4</text><text x=\"515.2\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2026-Q1</text><text x=\"630.0\" y=\"248\" class=\"c-ax\" text-anchor=\"middle\">2026-Q2</text><polyline points=\"56.0,148.5 170.8,140.3 285.6,133.3 400.4,128.3 515.2,125.2 630.0,18.0\" fill=\"none\" stroke=\"var(--s1)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"148.5\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"170.8\" cy=\"140.3\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"285.6\" cy=\"133.3\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"400.4\" cy=\"128.3\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"515.2\" cy=\"125.2\" r=\"2.6\" fill=\"var(--s1)\"/><circle cx=\"630.0\" cy=\"18.0\" r=\"2.6\" fill=\"var(--s1)\"/><text x=\"640.0\" y=\"22.0\" class=\"c-val\" fill=\"var(--s1)\">showNotification</text><polyline points=\"56.0,184.5 170.8,180.9 285.6,176.3 400.4,172.0 515.2,173.3 630.0,168.7\" fill=\"none\" stroke=\"var(--s2)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"184.5\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"170.8\" cy=\"180.9\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"285.6\" cy=\"176.3\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"400.4\" cy=\"172.0\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"515.2\" cy=\"173.3\" r=\"2.6\" fill=\"var(--s2)\"/><circle cx=\"630.0\" cy=\"168.7\" r=\"2.6\" fill=\"var(--s2)\"/><text x=\"640.0\" y=\"172.7\" class=\"c-val\" fill=\"var(--s2)\">setDiscount</text><polyline points=\"56.0,226.0 170.8,226.0 285.6,226.0 400.4,226.0 515.2,226.0 630.0,226.0\" fill=\"none\" stroke=\"var(--s3)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"170.8\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"285.6\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"400.4\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"515.2\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s3)\"/><circle cx=\"630.0\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s3)\"/><text x=\"640.0\" y=\"230.0\" class=\"c-val\" fill=\"var(--s3)\">addLoyaltyPoints</text><polyline points=\"56.0,226.0 170.8,226.0 285.6,226.0 400.4,226.0 515.2,226.0 630.0,226.0\" fill=\"none\" stroke=\"var(--s4)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"170.8\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"285.6\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"400.4\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"515.2\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s4)\"/><circle cx=\"630.0\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s4)\"/><text x=\"640.0\" y=\"230.0\" class=\"c-val\" fill=\"var(--s4)\">acceptCoupon</text><polyline points=\"56.0,226.0 170.8,226.0 285.6,226.0 400.4,226.0 515.2,226.0 630.0,226.0\" fill=\"none\" stroke=\"var(--s5)\" stroke-width=\"2\" stroke-linejoin=\"round\"/><circle cx=\"56.0\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"170.8\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"285.6\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"400.4\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"515.2\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s5)\"/><circle cx=\"630.0\" cy=\"226.0\" r=\"2.6\" fill=\"var(--s5)\"/><text x=\"640.0\" y=\"230.0\" class=\"c-val\" fill=\"var(--s5)\">rejectCoupon</text></svg></figure>",
+        "<figure class=\"fig\"><figcaption class=\"fig-t\">Adoption state this quarter</figcaption><div class=\"t-wrap\"><table><thead><tr><th>feature</th><th>adoption state</th><th>usage count</th><th>usage qoq</th><th>is entitled</th></tr></thead><tbody><tr><td class=\"\">showNotification</td><td class=\"\">growing</td><td class=\"t-num\">12,722</td><td class=\"t-num\">+106.3%</td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">setDiscount</td><td class=\"\">steady</td><td class=\"t-num\">3,507</td><td class=\"t-num\">+8.7%</td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">acceptCoupon</td><td class=\"\">never used</td><td class=\"t-num\">0</td><td class=\"\"></td><td class=\"t-bool\">yes</td></tr><tr><td class=\"\">addLoyaltyPoints</td><td class=\"\">never used</td><td class=\"t-num\">0</td><td class=\"\"></td><td class=\"t-bool\">no</td></tr><tr><td class=\"\">rejectCoupon</td><td class=\"\">never used</td><td class=\"t-num\">0</td><td class=\"\"></td><td class=\"t-bool\">yes</td></tr></tbody></table></div></figure>"
+      ],
+      "ranking": {}
+    },
+    {
+      "id": "anomalies",
+      "title": "Worth discussing",
+      "narrative": "Two reliability movements stand out this quarter, both server error rate increases on customer-facing applications. Brightline Grocers Web ran at 1.9% error rate against a usual 0.5%, and Brightline Grocers Mobile ran at 1.1% against a usual 0.3%. Both are customer-visible and both touch revenue-affecting traffic.\n\nThe data shows these moved, not why. Worth asking whether the team saw anything on their side around early and mid June that lines up with either spike, and whether either is still elevated.\n\nA handful of other movements were reviewed and set aside, mostly effect-firing counts on setDiscount and showNotification, because they carried lower commercial weight or thin volume relative to the two error rate jumps above.",
+      "grounded": true,
+      "figures_checked": 4,
+      "unverified": [],
+      "evidence": [],
+      "context_grounded": true,
+      "quotes_checked": 0,
+      "citations_used": [],
+      "unresolved_citations": [],
+      "unverified_quotes": [],
+      "figures": [
+        "<figure class=\"fig\"><figcaption class=\"fig-t\">Ranked by materiality, not by statistical significance</figcaption><div class=\"t-wrap\"><table><thead><tr><th>entity label</th><th>metric name</th><th>week start</th><th>metric value</th><th>baseline mean</th><th>salience</th></tr></thead><tbody><tr class=\"row-hl\"><td class=\"\">Brightline Grocers Web</td><td class=\"\">server error rate</td><td class=\"\">2026-06-01</td><td class=\"t-num\">1.9%</td><td class=\"t-num\">0.5%</td><td class=\"t-num\">108.9</td></tr><tr class=\"row-hl\"><td class=\"\">Brightline Grocers Mobile</td><td class=\"\">server error rate</td><td class=\"\">2026-06-15</td><td class=\"t-num\">1.1%</td><td class=\"t-num\">0.3%</td><td class=\"t-num\">94.4</td></tr></tbody></table></div></figure>"
+      ],
+      "ranking": {
+        "ranked": [
+          {
+            "metric_name": "server_error_rate",
+            "entity_type": "application",
+            "entity_label": "Brightline Grocers Web",
+            "week_start": "2026-06-01T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "4.55223540443635",
+            "metric_value": "0.019417475728155338",
+            "baseline_mean": "0.004582487330829103",
+            "relative_change": "3.237322293838652",
+            "movement_magnitude": "3.056007609849204",
+            "value_weight": "0.5",
+            "volume": "206",
+            "salience": 1.0887,
+            "salience_reasons": [
+              "moving in the wrong direction",
+              "customer-visible reliability"
+            ],
+            "is_deterioration": true
+          },
+          {
+            "metric_name": "server_error_rate",
+            "entity_type": "application",
+            "entity_label": "Brightline Grocers Mobile",
+            "week_start": "2026-06-15T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "2.8807822564884433",
+            "metric_value": "0.010638297872340425",
+            "baseline_mean": "0.0031385711783508334",
+            "relative_change": "2.3895353228631677",
+            "movement_magnitude": "1.4099486184700432",
+            "value_weight": "0.5",
+            "volume": "188",
+            "salience": 0.9443,
+            "salience_reasons": [
+              "moving in the wrong direction",
+              "customer-visible reliability",
+              "thin volume, damped"
+            ],
+            "is_deterioration": true
+          }
+        ],
+        "suppressed": [
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "setDiscount",
+            "week_start": "2026-05-04T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": true,
+            "z_score": "3.0936454267819",
+            "metric_value": "302",
+            "baseline_mean": "257.125",
+            "relative_change": "0.17452600875060767",
+            "movement_magnitude": "44.875",
+            "value_weight": "1",
+            "volume": "302",
+            "salience": 0.0802,
+            "salience_reasons": [],
+            "is_deterioration": false
+          },
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "showNotification",
+            "week_start": "2026-04-06T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": false,
+            "is_increase": true,
+            "z_score": "2.9566247316492746",
+            "metric_value": "930",
+            "baseline_mean": "532.125",
+            "relative_change": "0.7477096546863988",
+            "movement_magnitude": "397.875",
+            "value_weight": "0.05",
+            "volume": "930",
+            "salience": 0.0096,
+            "salience_reasons": [
+              "low commercial value, demoted"
+            ],
+            "is_deterioration": false
+          },
+          {
+            "metric_name": "effects_fired",
+            "entity_type": "effect_type",
+            "entity_label": "setDiscount",
+            "week_start": "2026-04-27T00:00:00.000",
+            "is_paid_feature": false,
+            "affects_revenue": true,
+            "is_increase": false,
+            "z_score": "-2.5065754625163144",
+            "metric_value": "228",
+            "baseline_mean": "258.25",
+            "relative_change": "-0.11713455953533398",
+            "movement_magnitude": "30.25",
+            "value_weight": "1",
+            "volume": "228",
+            "salience": 0.0708,
+            "salience_reasons": [
+              "moving in the wrong direction"
+            ],
+            "is_deterioration": true
+          }
+        ],
+        "candidate_count": 5,
+        "salience_floor": 0.15
+      }
+    }
+  ],
+  "kpis": [
+    "<div class=\"kpi\"><div class=\"k\">Sessions evaluated</div><div class=\"v up\">24,222</div><div class=\"d\">+6.9% on last quarter</div></div>",
+    "<div class=\"kpi\"><div class=\"k\">Cart value seen</div><div class=\"v\">1,132,603</div><div class=\"d\">GBP</div></div>",
+    "<div class=\"kpi\"><div class=\"k\">API error rate</div><div class=\"v\">0.5%</div><div class=\"d\">across all applications</div></div>",
+    "<div class=\"kpi\"><div class=\"k\">Loyalty points outstanding</div><div class=\"v\">0</div><div class=\"d\">issued minus burned</div></div>"
+  ],
+  "provenance": {
+    "registry_size": 9,
+    "context_corpus": {
+      "documents_available": 0,
+      "documents_searchable": 0,
+      "withheld_internal": 0,
+      "sources": []
+    },
+    "evidence_cited": 0,
+    "anomaly_candidates": 5,
+    "anomaly_surfaced": 2
+  }
+}
