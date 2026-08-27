@@ -1,12 +1,13 @@
 # Portfolio - Niv Belleli
 
-Two working systems that turn messy operational data into something a
-non-technical team can act on, with the guardrails built into the system rather
-than into people's habits.
+Systems that turn messy operational reality into something a non-technical team
+can act on, with the guardrails built into the system rather than into people's
+habits.
 
-Both were built as take-home work for a GTM AI Engineer process. The task
-briefs themselves are not reproduced here; each project states the problem in
-my own words and then shows the implementation.
+The first two were built as take-home work for a GTM AI Engineer process. The
+task briefs are not reproduced here; each project states the problem in my own
+words and then shows the implementation. The last two are patterns I ran in
+production and rebuilt clean, with no employer data, code, or content.
 
 ---
 
@@ -55,3 +56,18 @@ behind each boundary.
 
 Each project has its own README with setup steps. The QBR pipeline generates its
 own dataset (`make generate`); no data is committed to this repository.
+
+---
+
+## [Skill Shop](skill-shop/) *(in progress)*
+
+Turning scattered individual AI hacks into repeatable practice. A browsable
+catalogue generated from a registry, a contribution path, and a three-state
+graduation gate (sandbox, reviewed, published) that puts the quality standard in
+version control instead of in a policy document.
+
+## [Brain Onboarding](brain-onboarding/) *(in progress)*
+
+The path from zero to a working context layer for a non-technical person. Guided
+setup, typed frontmatter so retrieval narrows before it reads, and an update
+process that rides on work people already do rather than a review nobody runs.
